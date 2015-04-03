@@ -72,7 +72,7 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 
-    auto pacman = Sprite::create("pacman.png");
+    auto pacman = Sprite::create("Pacman.png");
 
     pacman->setPosition(Vec2(300,50));
     pacman->setRotation(0);
