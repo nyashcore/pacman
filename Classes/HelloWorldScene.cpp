@@ -72,13 +72,39 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 
-    auto pacman = Sprite::create("Pacman.png");
+    // load the Sprite Sheet
+    auto spritecache = SpriteFrameCache::getInstance();
+    spritecache->addSpriteFramesWithFile("sprites.plist");
 
+    // created by retrieving the spriteframe from the cache
+    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
+    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+//    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
+//    auto pacman = Sprite::create("icon.png", Rect(0, 0, 20, 20));
     pacman->setPosition(Vec2(300,250));
     pacman->setRotation(0);
-    pacman->setScale(0.3);
+    pacman->setScale(2);
     pacman->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman, 1);
+    auto moveBy1 = MoveBy::create(2, Vec2(50,0));
+    auto moveBy2 = MoveBy::create(2, Vec2(0,50));
+    auto delay = DelayTime::create(1);
+    pacman->runAction(Sequence::create(moveBy1, delay, moveBy2, nullptr));
+
+    // created by retrieving the spriteframe from the cache
+    auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
+    auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
+//    auto ghost = Sprite::createWithSpriteFrameName("Pinkyghost.png");
+//    auto ghost = Sprite::create("icon.png", Rect(0, 80, 20, 20));
+    pinkyGhost->setPosition(Vec2(150,200));
+    pinkyGhost->setRotation(0);
+    pinkyGhost->setScale(2);
+    pinkyGhost->setAnchorPoint(Vec2(0.5, 0.5));
+    this->addChild(pinkyGhost, 0);
+    auto moveBy3 = MoveBy::create(2, Vec2(30,0));
+    auto moveBy4 = MoveBy::create(2, Vec2(0,-80));
+    pinkyGhost->runAction(Sequence::create(moveBy3, delay, moveBy4, nullptr));
 
     return true;
 }
