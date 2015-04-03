@@ -74,7 +74,7 @@ bool HelloWorld::init()
 
     auto pacman = Sprite::create("Pacman.png");
 
-    pacman->setPosition(Vec2(300,50));
+    pacman->setPosition(Vec2(300,250));
     pacman->setRotation(0);
     pacman->setScale(0.3);
     pacman->setAnchorPoint(Vec2(0.5, 0.5));
