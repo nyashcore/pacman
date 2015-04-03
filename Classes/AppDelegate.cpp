@@ -7,7 +7,7 @@ AppDelegate::AppDelegate() {
 
 }
 
-AppDelegate::~AppDelegate() 
+AppDelegate::~AppDelegate()
 {
 }
 
@@ -22,7 +22,7 @@ void AppDelegate::initGLContextAttrs()
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-// If you want to use packages manager to install more packages, 
+// If you want to use packages manager to install more packages,
 // don't modify or remove this function
 static int register_all_packages()
 {
@@ -34,7 +34,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("My Game");
+        glview = GLViewImpl::create("Pacman");
         director->setOpenGLView(glview);
     }
 

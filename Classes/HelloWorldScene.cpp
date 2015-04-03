@@ -6,7 +6,7 @@ Scene* HelloWorld::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
-    
+
     // 'layer' is an autorelease object
     auto layer = HelloWorld::create();
 
@@ -26,7 +26,7 @@ bool HelloWorld::init()
     {
         return false;
     }
-    
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -39,7 +39,7 @@ bool HelloWorld::init()
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-    
+
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
 
@@ -53,9 +53,9 @@ bool HelloWorld::init()
 
     // add a label shows "Hello World"
     // create and initialize a label
-    
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    
+
+    auto label = Label::createWithTTF("Hello, Bitches!", "fonts/Marker Felt.ttf", 24);
+
     // position the label on the center of the screen
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
@@ -71,7 +71,15 @@ bool HelloWorld::init()
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
-    
+
+    auto pacman = Sprite::create("pacman.png");
+
+    pacman->setPosition(Vec2(300,50));
+    pacman->setRotation(0);
+    pacman->setScale(0.3);
+    pacman->setAnchorPoint(Vec2(0.5, 0.5));
+    this->addChild(pacman, 1);
+
     return true;
 }
 
