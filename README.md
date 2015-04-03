@@ -2,7 +2,6 @@
 Project C++
 
 <p>Taking part in development:</p>
-<br>
 <p>$ cd ~</p>
 <p>$ git clone git@github.com:cocos2d/cocos2d-x.git</p>
 <p>$ cd cocos2d-x</p>
