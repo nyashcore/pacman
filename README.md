@@ -12,5 +12,6 @@ Project C++
 <p>$ git clone git@github.com:nyashcore/pacman.git</p>
 <p>$ cocos new MyGame -p com.rksixers.mygame -l cpp</p>
 <p>$ cp -r MyGame/cocos2d pacman/</p>
+<p>$ build/install-deps-linux.sh</p>
 <p>$ cd pacman/</p>
 <p>$ cocos run -p linux</p>
