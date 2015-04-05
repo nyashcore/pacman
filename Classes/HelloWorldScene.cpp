@@ -96,12 +96,14 @@ bool HelloWorld::init()
     Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
-
+    auto callbackRotate = CallFunc::create([](){
+        log("Rotated!");
+    });
     auto moveBy1 = MoveBy::create(2, Vec2(200,0));
     auto moveRotate1 = RotateTo::create(0,-90.0f);
     auto moveBy2 = MoveBy::create(2, Vec2(0,150));
-    auto delay = DelayTime::create(1);
-    pacman->runAction(Sequence::create(moveBy1, moveRotate1, moveBy2, nullptr));
+    auto delay = DelayTime::create(0.25);
+    pacman->runAction(Sequence::create(moveBy1, moveRotate1, callbackRotate, moveBy2, nullptr));
 
     // created by retrieving the spriteframe from the cache
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
@@ -116,6 +118,20 @@ bool HelloWorld::init()
     auto moveBy3 = MoveBy::create(2, Vec2(30,0));
     auto moveBy4 = MoveBy::create(2, Vec2(0,-80));
     pinkyGhost->runAction(Sequence::create(moveBy3, delay, moveBy4, nullptr));
+
+    auto blueGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("BlueGhost.png");
+    auto blueGhost = Sprite::createWithSpriteFrame(blueGhostFrame);
+    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height));
+    blueGhost->setScale(2);
+    blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
+    this->addChild(blueGhost, 0);
+    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - 2*blueGhost->getContentSize().height)));
+    auto move2 = move1->reverse();
+    auto move_ease_in = EaseBounceOut::create(move1->clone());
+    auto move_ease_in_back = EaseBounceOut::create(move2->clone());
+    auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
+
+    blueGhost->runAction(RepeatForever::create(seq1));
 
     return true;
 }
