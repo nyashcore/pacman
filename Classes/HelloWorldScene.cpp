@@ -97,13 +97,16 @@ bool HelloWorld::init()
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
 
-    auto moveBy1 = MoveBy::create(2, Vec2(200,0));
+   /* auto moveBy1 = MoveBy::create(2, Vec2(200,0));
     auto moveRotate1 = RotateTo::create(0,-90.0f);
     auto moveBy2 = MoveBy::create(2, Vec2(0,150));
+    auto moveTo1 = MoveTo::create(2, Vec2(300, 250));
+    auto moveRotate2 = RotateTo::create(0,0.0f);
     auto delay = DelayTime::create(1);
-    pacman->runAction(Sequence::create(moveBy1, moveRotate1, moveBy2, nullptr));
+    pacman->runAction(Sequence::create(moveBy1, moveRotate1, moveBy2, moveRotate2, moveTo1, nullptr));
 
-    // created by retrieving the spriteframe from the cache
+    // created by retrieving the spriteframe from the cache*/
+    auto delay = DelayTime::create(1);
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
     auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
 //    auto ghost = Sprite::createWithSpriteFrameName("Pinkyghost.png");
@@ -116,10 +119,38 @@ bool HelloWorld::init()
     auto moveBy3 = MoveBy::create(2, Vec2(30,0));
     auto moveBy4 = MoveBy::create(2, Vec2(0,-80));
     pinkyGhost->runAction(Sequence::create(moveBy3, delay, moveBy4, nullptr));
+    auto eventListener = EventListenerKeyboard::create();
+    eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event){
+
+        Vec2 loc = event->getCurrentTarget()->getPosition();
+        switch(keyCode){
+            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            case EventKeyboard::KeyCode::KEY_A:
+                loc.x -= 10;
+                event->getCurrentTarget()->setPosition(loc.x,loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_D:
+                loc.x += 10;
+                event->getCurrentTarget()->setPosition(loc.x,loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_W:
+                loc.y += 10;
+                event->getCurrentTarget()->setPosition(loc.x,loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            case EventKeyboard::KeyCode::KEY_S:
+                loc.y -= 10;
+                event->getCurrentTarget()->setPosition(loc.x,loc.y);
+                break;
+        }
+    };
+
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, pacman);
 
     return true;
 }
-
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
