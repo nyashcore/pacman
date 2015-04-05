@@ -6,7 +6,7 @@
         <key>texturePackerVersion</key>
         <string>3.7.0</string>
         <key>fileName</key>
-        <string>/home/qwe/Sprites/sprites</string>
+        <string>/home/qwe/cocos2d-x/pacman/Resources/sprites/sprites</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -193,6 +193,7 @@
             <filename>Pacman.png</filename>
             <filename>PinkyGhost.png</filename>
             <filename>RedGhost.png</filename>
+            <filename>PacmanRound.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
