@@ -7,7 +7,7 @@
             <key>BlueGhost.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,36},{28,32}}</string>
+                <string>{{34,2},{28,32}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -20,11 +20,11 @@
             <key>OrangeGhost.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,70},{28,32}}</string>
+                <string>{{34,36},{28,32}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
                 <string>{{2,0},{28,32}}</string>
                 <key>sourceSize</key>
@@ -43,10 +43,23 @@
                 <key>sourceSize</key>
                 <string>{32,32}</string>
             </dict>
+            <key>PacmanRound.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{2,36},{30,32}}</string>
+                <key>offset</key>
+                <string>{1,0}</string>
+                <key>rotated</key>
+                <false/>
+                <key>sourceColorRect</key>
+                <string>{{2,0},{30,32}}</string>
+                <key>sourceSize</key>
+                <string>{32,32}</string>
+            </dict>
             <key>PinkyGhost.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{32,36},{28,32}}</string>
+                <string>{{2,70},{28,32}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -59,7 +72,7 @@
             <key>RedGhost.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{34,2},{28,32}}</string>
+                <string>{{32,70},{28,32}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -77,9 +90,9 @@
             <key>realTextureFileName</key>
             <string>Sprites.png</string>
             <key>size</key>
-            <string>{64,100}</string>
+            <string>{64,104}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:59c415a1336f09bc9fd7c8a3dae1cfa4:df330995f1d0b1328f2dd109cd573193:c05edf578fc9c8444e0f257145744b37$</string>
+            <string>$TexturePacker:SmartUpdate:e74fa94d00b42eec42282dcccec07742:1b8c2464ff8ee572d31c7d85713876bc:c05edf578fc9c8444e0f257145744b37$</string>
             <key>textureFileName</key>
             <string>Sprites.png</string>
         </dict>

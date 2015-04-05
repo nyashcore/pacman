@@ -74,11 +74,12 @@ bool HelloWorld::init()
 
     // load the Sprite Sheet
     auto spritecache = SpriteFrameCache::getInstance();
-    spritecache->addSpriteFramesWithFile("sprites.plist");
+    spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
     // created by retrieving the spriteframe from the cache
     auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
     auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+
 //    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
 //    auto pacman = Sprite::create("icon.png", Rect(0, 0, 20, 20));
     pacman->setPosition(Vec2(300,250));
@@ -87,10 +88,20 @@ bool HelloWorld::init()
     pacman->setAnchorPoint(Vec2(0.5, 0.5));
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman, 1);
-    auto moveBy1 = MoveBy::create(2, Vec2(50,0));
-    auto moveBy2 = MoveBy::create(2, Vec2(0,50));
+
+    Vector<SpriteFrame*> animPacman;
+    animPacman.reserve(2);
+    animPacman.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png"));
+    animPacman.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName("PacmanRound.png"));
+    Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
+    Animate* animate = Animate::create(animation);
+    pacman->runAction(RepeatForever::create(animate));
+
+    auto moveBy1 = MoveBy::create(2, Vec2(200,0));
+    auto moveRotate1 = RotateTo::create(0,-90.0f);
+    auto moveBy2 = MoveBy::create(2, Vec2(0,150));
     auto delay = DelayTime::create(1);
-    pacman->runAction(Sequence::create(moveBy1, delay, moveBy2, nullptr));
+    pacman->runAction(Sequence::create(moveBy1, moveRotate1, moveBy2, nullptr));
 
     // created by retrieving the spriteframe from the cache
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
