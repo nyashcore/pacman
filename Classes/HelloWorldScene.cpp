@@ -74,7 +74,7 @@ bool HelloWorld::init()
 
     // load the Sprite Sheet
     auto spritecache = SpriteFrameCache::getInstance();
-    spritecache->addSpriteFramesWithFile("sprites.plist");
+    spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
     // created by retrieving the spriteframe from the cache
     auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
