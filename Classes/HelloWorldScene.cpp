@@ -96,6 +96,7 @@ bool HelloWorld::init()
     Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
+<<<<<<< HEAD
 
    /* auto moveBy1 = MoveBy::create(2, Vec2(200,0));
     auto moveRotate1 = RotateTo::create(0,-90.0f);
@@ -104,6 +105,16 @@ bool HelloWorld::init()
     auto moveRotate2 = RotateTo::create(0,0.0f);
     auto delay = DelayTime::create(1);
     pacman->runAction(Sequence::create(moveBy1, moveRotate1, moveBy2, moveRotate2, moveTo1, nullptr));
+=======
+    auto callbackRotate = CallFunc::create([](){
+        log("Rotated!");
+    });
+    auto moveBy1 = MoveBy::create(2, Vec2(200,0));
+    auto moveRotate1 = RotateTo::create(0,-90.0f);
+    auto moveBy2 = MoveBy::create(2, Vec2(0,150));
+    auto delay = DelayTime::create(0.25);
+    pacman->runAction(Sequence::create(moveBy1, moveRotate1, callbackRotate, moveBy2, nullptr));
+>>>>>>> 44705509e036af6735c56a382ba762c42c0c55d6
 
     // created by retrieving the spriteframe from the cache*/
     auto delay = DelayTime::create(1);
@@ -148,6 +159,20 @@ bool HelloWorld::init()
     };
 
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, pacman);
+
+    auto blueGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("BlueGhost.png");
+    auto blueGhost = Sprite::createWithSpriteFrame(blueGhostFrame);
+    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height));
+    blueGhost->setScale(2);
+    blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
+    this->addChild(blueGhost, 0);
+    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - 2*blueGhost->getContentSize().height)));
+    auto move2 = move1->reverse();
+    auto move_ease_in = EaseBounceOut::create(move1->clone());
+    auto move_ease_in_back = EaseBounceOut::create(move2->clone());
+    auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
+
+    blueGhost->runAction(RepeatForever::create(seq1));
 
     return true;
 }

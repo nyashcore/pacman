@@ -39,7 +39,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
-    director->setDisplayStats(true);
+//    director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
@@ -48,9 +48,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();
-
+//    auto gameover = GameOver::createScene();
     // run
     director->runWithScene(scene);
+//    director->replaceScene(TransitionFade::create(0.5, scene, Color3B(0,255,255)));
+    director->replaceScene(TransitionFlipX::create(2, scene));
+//    director->replaceScene(TransitionSlideInT::create(1, scene));
 
     return true;
 }
