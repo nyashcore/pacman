@@ -96,7 +96,6 @@ bool HelloWorld::init()
     Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
-<<<<<<< HEAD
 
    /* auto moveBy1 = MoveBy::create(2, Vec2(200,0));
     auto moveRotate1 = RotateTo::create(0,-90.0f);
@@ -114,7 +113,6 @@ bool HelloWorld::init()
     auto moveBy2 = MoveBy::create(2, Vec2(0,150));
     auto delay = DelayTime::create(0.25);
     pacman->runAction(Sequence::create(moveBy1, moveRotate1, callbackRotate, moveBy2, nullptr));
->>>>>>> 44705509e036af6735c56a382ba762c42c0c55d6
 
     // created by retrieving the spriteframe from the cache*/
     auto delay = DelayTime::create(1);
