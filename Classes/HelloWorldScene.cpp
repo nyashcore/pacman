@@ -1,4 +1,5 @@
 #include "HelloWorldScene.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 
@@ -10,18 +11,14 @@ Scene* HelloWorld::createScene()
     // 'layer' is an autorelease object
     auto layer = HelloWorld::create();
 
-    // add layer as a child to scene
     scene->addChild(layer);
 
-    // return the scene
     return scene;
 }
 
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
-    //////////////////////////////
-    // 1. super init first
     if ( !Layer::init() )
     {
         return false;
@@ -30,56 +27,60 @@ bool HelloWorld::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
+    TTFConfig labelConfig;
+    labelConfig.fontFilePath = "fonts/Marker Felt.ttf";
+    labelConfig.fontSize = 24;
+    labelConfig.glyphs = GlyphCollection::DYNAMIC;
+    labelConfig.outlineSize = 0;
+    labelConfig.customGlyphs = nullptr;
+    labelConfig.distanceFieldEnabled = false;
 
-    // add a "close" icon to exit the progress. it's an autorelease object
+    auto func = [] () { log("lambda"); };
+    func();
+
+    Vector<MenuItem*> MenuItems;
+//    auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
+//                                            [&](Ref* sender){
+//                                                // your code here
+//                                            });
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
+	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2,
+                                                origin.y + closeItem->getContentSize().height/2));
+    auto restartLabel1 = Label::createWithTTF(labelConfig, "Restart");
+    auto restartItem = MenuItemLabel::create(
+                                            restartLabel1,
+                                            CC_CALLBACK_1(HelloWorld::menuRestartCallback, this));
+    restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
+                                    origin.y + visibleSize.height/3));
+	MenuItems.pushBack(closeItem);
+	MenuItems.pushBack(restartItem);
+    auto menu = Menu::createWithArray(MenuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-
-    auto label = Label::createWithTTF("Hello, Bitches!", "fonts/Marker Felt.ttf", 24);
-
-    // position the label on the center of the screen
+    auto label = Label::createWithTTF(labelConfig, "Hello, Bitches!");
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
-
-    // add the label as a child to this layer
+//    label->enableShadow(Color4B::WHITE);
+//    label->enableGlow(Color4B::YELLOW);
+    label->enableOutline(Color4B::GRAY, 1);
     this->addChild(label, 1);
 
-    // add "HelloWorld" splash screen"
     auto sprite = Sprite::create("HelloWorld.png");
 
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 
-    // load the Sprite Sheet
     auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
-    // created by retrieving the spriteframe from the cache
-    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
-    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
-
+//    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
+//    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+    auto pacman = Sprite::create();
 //    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
 //    auto pacman = Sprite::create("icon.png", Rect(0, 0, 20, 20));
     pacman->setPosition(Vec2(300,250));
@@ -96,6 +97,7 @@ bool HelloWorld::init()
     Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
+
     auto callbackRotate = CallFunc::create([](){
         log("Rotated!");
     });
@@ -105,7 +107,6 @@ bool HelloWorld::init()
     auto delay = DelayTime::create(0.25);
     pacman->runAction(Sequence::create(moveBy1, moveRotate1, callbackRotate, moveBy2, nullptr));
 
-    // created by retrieving the spriteframe from the cache
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
     auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
 //    auto ghost = Sprite::createWithSpriteFrameName("Pinkyghost.png");
@@ -130,7 +131,6 @@ bool HelloWorld::init()
     auto move_ease_in = EaseBounceOut::create(move1->clone());
     auto move_ease_in_back = EaseBounceOut::create(move2->clone());
     auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
-
     blueGhost->runAction(RepeatForever::create(seq1));
 
     return true;
@@ -149,4 +149,10 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif
+}
+
+void HelloWorld::menuRestartCallback(Ref* pSender)
+{
+    auto scene = HelloWorld::createScene();
+    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }

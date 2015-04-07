@@ -52,7 +52,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // run
     director->runWithScene(scene);
 //    director->replaceScene(TransitionFade::create(0.5, scene, Color3B(0,255,255)));
-    director->replaceScene(TransitionFlipX::create(2, scene));
 //    director->replaceScene(TransitionSlideInT::create(1, scene));
 
     return true;
