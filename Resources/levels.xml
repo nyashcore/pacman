@@ -1,0 +1,23 @@
+<?xml version=\"1.0\"?>
+<lvl lvl="1">
+	<map>
+		<walls>
+			<wall x="16" y="16"></wall>
+			<wall x="16" y="48"></wall>
+			<wall x="16" y="80"></wall>
+			<wall x="48" y="16"></wall>
+			<wall x="48" y="80"></wall>
+			<wall x="80" y="16"></wall>
+			<wall x="80" y="80"></wall>
+			<wall x="112" y="16"></wall>
+			<wall x="112" y="80"></wall>
+		</walls>
+		<food>
+			<coin x="48" y="48"></coin>
+			<coin x="80" y="48"></coin>
+			<coin x="112" y="48"></coin>
+		</food>
+	</map>
+</lvl>
+<lvl lvl="2">
+</lvl>

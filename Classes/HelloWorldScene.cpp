@@ -1,5 +1,10 @@
 #include "HelloWorldScene.h"
 #include "ui/CocosGUI.h"
+#include "../external/tinyxml2/tinyxml2.h"
+#include <vector>
+#include <cstring>
+#include <stdio.h>
+using std::vector;
 
 USING_NS_CC;
 
@@ -74,6 +79,39 @@ bool HelloWorld::init()
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
     this->addChild(sprite, 0);
+
+    auto nodecache = SpriteFrameCache::getInstance();
+    nodecache->addSpriteFramesWithFile("nodes/nodes.plist");
+    auto wallFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Wall.png");
+
+    tinyxml2::XMLDocument doc;
+    doc.LoadFile("../../../Resources/levels.xml");
+    float x, y;
+    tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("walls")->FirstChildElement("wall");
+    vector<Sprite*> wall;
+    for(size_t i = 0; pWallElement != nullptr; i++) {
+        pWallElement->QueryFloatAttribute("x", &x);
+        pWallElement->QueryFloatAttribute("y", &y);
+        wall.push_back(Sprite::createWithSpriteFrame(wallFrame));
+        wall[i]->setPosition(Vec2(x, y));
+        this->addChild(wall[i], 0);
+        pWallElement = pWallElement->NextSiblingElement("wall");
+    }
+
+    auto coinFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Food.png");
+    tinyxml2::XMLElement* pCoinElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("food")->FirstChildElement("coin");
+    vector<Sprite*> coin;
+    for(size_t i = 0; pCoinElement != nullptr; i++) {
+        pCoinElement->QueryFloatAttribute("x", &x);
+        pCoinElement->QueryFloatAttribute("y", &y);
+        coin.push_back(Sprite::createWithSpriteFrame(coinFrame));
+        coin[i]->setPosition(Vec2(x, y));
+        this->addChild(coin[i], 0);
+        pCoinElement = pCoinElement->NextSiblingElement("coin");
+    }
+//    tinyxml2::XMLElement* titleElement = doc.FirstChildElement( "PLAY" )->FirstChildElement( "TITLE" );
+//    tinyxml2::XMLText* textNode = titleElement->FirstChild()->ToText();
+//    printf( "Name of play (2): %s\n", textNode->Value() );
 
     auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
