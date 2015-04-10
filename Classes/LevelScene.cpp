@@ -1,28 +1,16 @@
-#include "HelloWorldScene.h"
-#include "ui/CocosGUI.h"
-#include "../external/tinyxml2/tinyxml2.h"
-#include <vector>
-#include <cstring>
-#include <stdio.h>
-using std::vector;
+#include "LevelScene.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* Level::createScene()
 {
-    // 'scene' is an autorelease object
-    auto scene = Scene::create();
-
-    // 'layer' is an autorelease object
-    auto layer = HelloWorld::create();
-
+    auto scene = Scene::createWithPhysics();
+    auto layer = Level::create();
     scene->addChild(layer);
-
     return scene;
 }
 
-// on "init" you need to initialize your instance
-bool HelloWorld::init()
+bool Level::init()
 {
     if ( !Layer::init() )
     {
@@ -40,24 +28,17 @@ bool HelloWorld::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    auto func = [] () { log("lambda"); };
-    func();
-
     Vector<MenuItem*> MenuItems;
-//    auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-//                                            [&](Ref* sender){
-//                                                // your code here
-//                                            });
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+                                           CC_CALLBACK_1(Level::menuCloseCallback, this));
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2,
                                                 origin.y + closeItem->getContentSize().height/2));
     auto restartLabel1 = Label::createWithTTF(labelConfig, "Restart");
     auto restartItem = MenuItemLabel::create(
                                             restartLabel1,
-                                            CC_CALLBACK_1(HelloWorld::menuRestartCallback, this));
+                                            CC_CALLBACK_1(Level::menuRestartCallback, this));
     restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
                                     origin.y + visibleSize.height/3));
 	MenuItems.pushBack(closeItem);
@@ -99,13 +80,12 @@ bool HelloWorld::init()
 
     auto coinFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Food.png");
     tinyxml2::XMLElement* pCoinElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("food")->FirstChildElement("coin");
-    vector<Sprite*> coin;
     for(size_t i = 0; pCoinElement != nullptr; i++) {
         pCoinElement->QueryFloatAttribute("x", &x);
         pCoinElement->QueryFloatAttribute("y", &y);
-        coin.push_back(Sprite::createWithSpriteFrame(coinFrame));
-        coin[i]->setPosition(Vec2(x, y));
-        this->addChild(coin[i], 0);
+        auto coin = Sprite::createWithSpriteFrame(coinFrame);
+        coin->setPosition(Vec2(x, y));
+        this->addChild(coin, 0);
         pCoinElement = pCoinElement->NextSiblingElement("coin");
     }
 //    tinyxml2::XMLElement* titleElement = doc.FirstChildElement( "PLAY" )->FirstChildElement( "TITLE" );
@@ -117,12 +97,18 @@ bool HelloWorld::init()
 
 //    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
 //    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+    auto physicsBody = PhysicsBody::createBox(Size(32.0f, 32.0f),
+                            PhysicsMaterial(0.1f, 1.0f, 0.0f));
+    physicsBody->setCategoryBitmask(3);
+    physicsBody->setCollisionBitmask(1);
+    physicsBody->setContactTestBitmask(1);
+    physicsBody->setDynamic(false);
     auto pacman = Sprite::create();
+    pacman->setPhysicsBody(physicsBody);
 //    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
-//    auto pacman = Sprite::create("icon.png", Rect(0, 0, 20, 20));
     pacman->setPosition(Vec2(300,250));
     pacman->setRotation(0);
-    pacman->setScale(2);
+    pacman->setScale(1);
     pacman->setAnchorPoint(Vec2(0.5, 0.5));
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman, 1);
@@ -135,22 +121,56 @@ bool HelloWorld::init()
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
 
-    auto callbackRotate = CallFunc::create([](){
-        log("Rotated!");
-    });
-    auto moveBy1 = MoveBy::create(2, Vec2(200,0));
-    auto moveRotate1 = RotateTo::create(0,-90.0f);
-    auto moveBy2 = MoveBy::create(2, Vec2(0,150));
-    auto delay = DelayTime::create(0.25);
-    pacman->runAction(Sequence::create(moveBy1, moveRotate1, callbackRotate, moveBy2, nullptr));
+    auto physicsBody1 = PhysicsBody::createBox(Size(32.0f, 32.0f),
+                            PhysicsMaterial(0.1f, 1.0f, 0.0f));
+    physicsBody1->setCategoryBitmask(1);
+    physicsBody1->setCollisionBitmask(3);
+    physicsBody1->setContactTestBitmask(1);
+    physicsBody1->setDynamic(false);
+    auto pacman1 = Sprite::create("CloseNormal.png");
+    pacman1->setPhysicsBody(physicsBody1);
+    pacman1->setPosition(Vec2(340,250));
+    pacman1->setRotation(0);
+    pacman1->setScale(1);
+    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman->setColor(Color3B::BLUE);
+    this->addChild(pacman1, 1);
+    auto eventListener = EventListenerKeyboard::create();
+    eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event){
 
+        Vec2 loc = event->getCurrentTarget()->getPosition();
+        switch(keyCode){
+            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            case EventKeyboard::KeyCode::KEY_A:
+                event->getCurrentTarget()->setPosition(--loc.x,loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_D:
+                event->getCurrentTarget()->setPosition(++loc.x,loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_W:
+                event->getCurrentTarget()->setPosition(loc.x,++loc.y);
+                break;
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            case EventKeyboard::KeyCode::KEY_S:
+                event->getCurrentTarget()->setPosition(loc.x,--loc.y);
+                break;
+        }
+    };
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,pacman);
+
+    auto contactListener = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = CC_CALLBACK_1(Level::onContactBegin, this);
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+//    schedule(CC_SCHEDULE_SELECTOR(PhysicsDemoCollisionProcessing::tick), 0.3f);
+
+    auto delay = DelayTime::create(0.25);
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
     auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
-//    auto ghost = Sprite::createWithSpriteFrameName("Pinkyghost.png");
-//    auto ghost = Sprite::create("icon.png", Rect(0, 80, 20, 20));
     pinkyGhost->setPosition(Vec2(150,200));
     pinkyGhost->setRotation(0);
-    pinkyGhost->setScale(2);
+    pinkyGhost->setScale(1);
     pinkyGhost->setAnchorPoint(Vec2(0.5, 0.5));
     this->addChild(pinkyGhost, 0);
     auto moveBy3 = MoveBy::create(2, Vec2(30,0));
@@ -159,11 +179,11 @@ bool HelloWorld::init()
 
     auto blueGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("BlueGhost.png");
     auto blueGhost = Sprite::createWithSpriteFrame(blueGhostFrame);
-    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height));
-    blueGhost->setScale(2);
+    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height/2));
+    blueGhost->setScale(1);
     blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
     this->addChild(blueGhost, 0);
-    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - 2*blueGhost->getContentSize().height)));
+    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - blueGhost->getContentSize().height)));
     auto move2 = move1->reverse();
     auto move_ease_in = EaseBounceOut::create(move1->clone());
     auto move_ease_in_back = EaseBounceOut::create(move2->clone());
@@ -174,7 +194,7 @@ bool HelloWorld::init()
 }
 
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
+void Level::menuCloseCallback(Ref* pSender)
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
@@ -188,8 +208,14 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 #endif
 }
 
-void HelloWorld::menuRestartCallback(Ref* pSender)
+void Level::menuRestartCallback(Ref* pSender)
 {
-    auto scene = HelloWorld::createScene();
+    auto scene = Level::createScene();
     Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+}
+
+bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
+{
+    std::cout << "contact!";
+    return true;
 }
