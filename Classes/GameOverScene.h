@@ -1,12 +1,10 @@
-#ifndef __LEVEL_SCENE_H__
-#define __LEVEL_SCENE_H__
+#ifndef __GAMEOVER_SCENE_H__
+#define __GAMEOVER_SCENE_H__
 
 #include "cocos2d.h"
-#include "GameOverScene.cpp"
 #include <iostream>
-#include "../external/tinyxml2/tinyxml2.h"
 
-class Level : public cocos2d::Layer
+class GameOver : public cocos2d::Layer
 {
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
@@ -17,10 +15,10 @@ public:
 
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    void menuRestartCallback(cocos2d::Ref* pSender);
-    bool onContactBegin(cocos2d::PhysicsContact& contact);
+//    void menuRestartCallback(cocos2d::Ref* pSender);
+
     // implement the "static create()" method manually
-    CREATE_FUNC(Level);
+    CREATE_FUNC(GameOver);
 };
 
-#endif // __LEVEL_SCENE_H__
+#endif // __GameOver_SCENE_H__

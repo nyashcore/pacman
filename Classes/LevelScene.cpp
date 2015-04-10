@@ -5,7 +5,9 @@ USING_NS_CC;
 Scene* Level::createScene()
 {
     auto scene = Scene::createWithPhysics();
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = Level::create();
+//    layer->setPhyWorld(scene->getPhysicsWorld());
     scene->addChild(layer);
     return scene;
 }
@@ -100,15 +102,14 @@ bool Level::init()
     auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
-//    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
-//    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
-    auto physicsBody = PhysicsBody::createBox(Size(32.0f, 32.0f),
-                            PhysicsMaterial(0.1f, 1.0f, 0.0f));
+    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
+    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+//    physicsBody->setDynamic(false);
+    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2);
+    physicsBody->setGravityEnable(false);
     physicsBody->setCategoryBitmask(3);
     physicsBody->setCollisionBitmask(1);
     physicsBody->setContactTestBitmask(1);
-    physicsBody->setDynamic(false);
-    auto pacman = Sprite::create();
     pacman->setPhysicsBody(physicsBody);
 //    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
     pacman->setPosition(Vec2(300,250));
@@ -126,13 +127,14 @@ bool Level::init()
     Animate* animate = Animate::create(animation);
     pacman->runAction(RepeatForever::create(animate));
 
-    auto physicsBody1 = PhysicsBody::createBox(Size(32.0f, 32.0f),
-                            PhysicsMaterial(0.1f, 1.0f, 0.0f));
+//    physicsBody1->setDynamic(false);
+    auto pacman1 = Sprite::create("CloseNormal.png");
+    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2);
+    physicsBody1->setDynamic(false);
+    physicsBody1->setGravityEnable(false);
     physicsBody1->setCategoryBitmask(1);
     physicsBody1->setCollisionBitmask(3);
     physicsBody1->setContactTestBitmask(1);
-    physicsBody1->setDynamic(false);
-    auto pacman1 = Sprite::create("CloseNormal.png");
     pacman1->setPhysicsBody(physicsBody1);
     pacman1->setPosition(Vec2(340,250));
     pacman1->setRotation(0);
@@ -221,6 +223,6 @@ void Level::menuRestartCallback(Ref* pSender)
 
 bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 {
-    std::cout << "contact!";
-    return true;
+    auto scene = GameOver::createScene();
+    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }
