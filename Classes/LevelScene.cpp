@@ -63,11 +63,8 @@ bool Level::init()
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
     this->addChild(sprite, 0);
 
-    _tileMap = new CCTMXTiledMap();
-    _tileMap->initWithTMXFile("../../../Resources/map/pacman.tmx");
-    _background = _tileMap->layerNamed("Background");
 
-    this->addChild(_tileMap);
+
     auto nodecache = SpriteFrameCache::getInstance();
     nodecache->addSpriteFramesWithFile("nodes/nodes.plist");
     auto wallFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Wall.png");
