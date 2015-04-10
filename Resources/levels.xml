@@ -1,4 +1,4 @@
-<?xml version=\"1.0\"?>
+<?xml version="1.0"?>
 <lvl lvl="1">
 	<map>
 		<walls>
@@ -18,6 +18,4 @@
 			<coin x="112" y="48"></coin>
 		</food>
 	</map>
-</lvl>
-<lvl lvl="2">
 </lvl>

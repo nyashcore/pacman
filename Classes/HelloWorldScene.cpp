@@ -88,8 +88,8 @@ bool HelloWorld::init()
     doc.LoadFile("../../../Resources/levels.xml");
     float x, y;
     tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("walls")->FirstChildElement("wall");
-    vector<Sprite*> wall;
-    for(size_t i = 0; pWallElement != nullptr; i++) {
+    //vector<Sprite*> wall;
+   /* for(size_t i = 0; pWallElement != nullptr; i++) {
         pWallElement->QueryFloatAttribute("x", &x);
         pWallElement->QueryFloatAttribute("y", &y);
         wall.push_back(Sprite::createWithSpriteFrame(wallFrame));
@@ -113,7 +113,7 @@ bool HelloWorld::init()
 //    tinyxml2::XMLText* textNode = titleElement->FirstChild()->ToText();
 //    printf( "Name of play (2): %s\n", textNode->Value() );
 
-    auto spritecache = SpriteFrameCache::getInstance();
+   /* auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
 //    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
@@ -170,7 +170,6 @@ bool HelloWorld::init()
     auto move_ease_in_back = EaseBounceOut::create(move2->clone());
     auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
     blueGhost->runAction(RepeatForever::create(seq1));
-
     return true;
 }
 
