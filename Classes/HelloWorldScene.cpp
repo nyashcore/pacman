@@ -40,19 +40,16 @@ bool HelloWorld::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
+
     auto func = [] () { log("lambda"); };
     func();
 
     Vector<MenuItem*> MenuItems;
-//    auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-//                                            [&](Ref* sender){
-//                                                // your code here
-//                                            });
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2,
+    closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2,
                                                 origin.y + closeItem->getContentSize().height/2));
     auto restartLabel1 = Label::createWithTTF(labelConfig, "Restart");
     auto restartItem = MenuItemLabel::create(
@@ -60,8 +57,8 @@ bool HelloWorld::init()
                                             CC_CALLBACK_1(HelloWorld::menuRestartCallback, this));
     restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
                                     origin.y + visibleSize.height/3));
-	MenuItems.pushBack(closeItem);
-	MenuItems.pushBack(restartItem);
+    MenuItems.pushBack(closeItem);
+    MenuItems.pushBack(restartItem);
     auto menu = Menu::createWithArray(MenuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -88,8 +85,6 @@ bool HelloWorld::init()
     doc.LoadFile("../../../Resources/levels.xml");
     float x, y;
     tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("walls")->FirstChildElement("wall");
-    vector<Sprite*> wall;
-    for(size_t i = 0; pWallElement != nullptr; i++) {
     for(size_t i = 0; pWallElement != nullptr; i++) {
         pWallElement->QueryFloatAttribute("x", &x);
         pWallElement->QueryFloatAttribute("y", &y);
@@ -178,7 +173,7 @@ bool HelloWorld::init()
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
+    MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
     return;
 #endif
 
