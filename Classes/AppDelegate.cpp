@@ -49,7 +49,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     auto scene = StartMenu::createScene();
-//    auto gameover = GameOver::createScene();
     // run
     director->runWithScene(scene);
 //    director->replaceScene(TransitionFade::create(0.5, scene, Color3B(0,255,255)));
