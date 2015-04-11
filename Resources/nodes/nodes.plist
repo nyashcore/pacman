@@ -7,7 +7,7 @@
             <key>Food.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{37,2},{10,10}}</string>
+                <string>{{36,2},{10,10}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
@@ -20,15 +20,15 @@
             <key>Wall.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{33,33}}</string>
+                <string>{{2,2},{32,32}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{33,33}}</string>
+                <string>{{0,0},{32,32}}</string>
                 <key>sourceSize</key>
-                <string>{33,33}</string>
+                <string>{32,32}</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -38,9 +38,9 @@
             <key>realTextureFileName</key>
             <string>Nodes.png</string>
             <key>size</key>
-            <string>{49,37}</string>
+            <string>{48,36}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:3017edf103383f057935ca6bedad503c:c58d3f186c24fc56b4d10f1237516212:6a8e5268816b7e867ea7d5a7ff42dae4$</string>
+            <string>$TexturePacker:SmartUpdate:dd944b63908d95f48f6d8826c9e1739b:73957325ad770c03b0e28442640df2c5:6a8e5268816b7e867ea7d5a7ff42dae4$</string>
             <key>textureFileName</key>
             <string>Nodes.png</string>
         </dict>
