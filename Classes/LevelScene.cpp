@@ -29,7 +29,7 @@ bool Level::init()
     labelConfig.outlineSize = 0;
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
-     auto map = TMXTiledMap::create("map/paman.tmx");
+     auto map = TMXTiledMap::create("map/pacman.tmx");
     addChild(map, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
