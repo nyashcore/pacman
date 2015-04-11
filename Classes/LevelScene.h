@@ -19,6 +19,7 @@ public:
     void menuCloseCallback(cocos2d::Ref* pSender);
     void menuRestartCallback(cocos2d::Ref* pSender);
     bool onContactBegin(cocos2d::PhysicsContact& contact);
+    void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     // implement the "static create()" method manually
     CREATE_FUNC(Level);
 };
