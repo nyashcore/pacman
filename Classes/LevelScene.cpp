@@ -140,30 +140,10 @@ bool Level::init()
     pacman1->setAnchorPoint(Vec2(0.5, 0.5));
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
-    auto eventListener = EventListenerKeyboard::create();
-    eventListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event){
 
-        Vec2 loc = event->getCurrentTarget()->getPosition();
-        switch(keyCode){
-            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-            case EventKeyboard::KeyCode::KEY_A:
-                event->getCurrentTarget()->setPosition(--loc.x,loc.y);
-                break;
-            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-            case EventKeyboard::KeyCode::KEY_D:
-                event->getCurrentTarget()->setPosition(++loc.x,loc.y);
-                break;
-            case EventKeyboard::KeyCode::KEY_UP_ARROW:
-            case EventKeyboard::KeyCode::KEY_W:
-                event->getCurrentTarget()->setPosition(loc.x,++loc.y);
-                break;
-            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-            case EventKeyboard::KeyCode::KEY_S:
-                event->getCurrentTarget()->setPosition(loc.x,--loc.y);
-                break;
-        }
-    };
-    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,pacman);
+    auto listener = EventListenerKeyboard::create();
+    listener->onKeyPressed = CC_CALLBACK_2(Level::onKeyPressed, this);
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, pacman);
 
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(Level::onContactBegin, this);
@@ -223,4 +203,50 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 {
     auto scene = GameOver::createScene();
     Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+}
+
+void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
+{
+     switch(keyCode){
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+        case EventKeyboard::KeyCode::KEY_A: {
+            auto moveLeft = MoveBy::create(0, Vec2(-1, 0));
+            Action* action = RepeatForever::create(moveLeft);
+            action->setTag(1);
+            event->getCurrentTarget()->stopAllActionsByTag(1);
+            event->getCurrentTarget()->setRotation(180.0f);
+            event->getCurrentTarget()->runAction(action);
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+        case EventKeyboard::KeyCode::KEY_D: {
+            auto moveRight = MoveBy::create(0, Vec2(1,0));
+            Action* action = RepeatForever::create(moveRight);
+            action->setTag(1);
+            event->getCurrentTarget()->stopAllActionsByTag(1);
+            event->getCurrentTarget()->setRotation(0.0f);
+            event->getCurrentTarget()->runAction(action);
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+        case EventKeyboard::KeyCode::KEY_W: {
+            auto moveUp = MoveBy::create(0, Vec2(0, 1));
+            Action* action = RepeatForever::create(moveUp);
+            action->setTag(1);
+            event->getCurrentTarget()->stopAllActionsByTag(1);
+            event->getCurrentTarget()->setRotation(-90.0f);
+            event->getCurrentTarget()->runAction(action);
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+        case EventKeyboard::KeyCode::KEY_S: {
+            auto moveDown = MoveBy::create(0, Vec2(0, -1));
+            Action* action = RepeatForever::create(moveDown);
+            action->setTag(1);
+            event->getCurrentTarget()->stopAllActionsByTag(1);
+            event->getCurrentTarget()->setRotation(90.0f);
+            event->getCurrentTarget()->runAction(action);
+            break;
+        }
+    }
 }

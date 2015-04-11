@@ -160,7 +160,7 @@ bool HelloWorld::init()
     blueGhost->setScale(2);
     blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
     this->addChild(blueGhost, 0);
-    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - 2*blueGhost->getContentSize().height)));
+    auto move1 = MoveBy::create(2, Vec2(0, - (visibleSize.height - 2*blueGhost->getContentSize().height)));
     auto move2 = move1->reverse();
     auto move_ease_in = EaseBounceOut::create(move1->clone());
     auto move_ease_in_back = EaseBounceOut::create(move2->clone());
