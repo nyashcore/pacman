@@ -139,20 +139,21 @@ bool Level::init()
     // run it and repeat it forever
     pacman->runAction(RepeatForever::create(animate));
 //    physicsBody1->setDynamic(false);
-    auto pacman1 = Sprite::create("sprites/RedGhost.png");
-    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
-    physicsBody1->setDynamic(false);
-    physicsBody1->setGravityEnable(false);
-    physicsBody1->setCategoryBitmask(1);
-    physicsBody1->setCollisionBitmask(3);
-    physicsBody1->setContactTestBitmask(1);
-    pacman1->setPhysicsBody(physicsBody1);
-    pacman1->setPosition(Vec2(340,250));
-    pacman1->setRotation(0);
-    pacman1->setScale(1);
-    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
-    pacman1->setTag(20);
-//    pacman->setColor(Color3B::BLUE);
+    Ghost ghost1;
+    auto pacman1 = ghost1.create();
+//    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
+//    physicsBody1->setDynamic(false);
+//    physicsBody1->setGravityEnable(false);
+//    physicsBody1->setCategoryBitmask(1);
+//    physicsBody1->setCollisionBitmask(3);
+//    physicsBody1->setContactTestBitmask(1);
+//    pacman1->setPhysicsBody(physicsBody1);
+//    pacman1->setPosition(Vec2(340,250));
+//    pacman1->setRotation(0);
+//    pacman1->setScale(1);
+//    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman1->setTag(20);
+////    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
 
     auto moveBy1 = MoveBy::create(1, Vec2(80,0));
