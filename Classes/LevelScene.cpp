@@ -205,47 +205,64 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
     Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }
 
+void Level::update(float delta){
+   auto position = pacman->getPosition();
+   if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+      position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
+   if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+      position.x = 0;
+   if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+      position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
+   if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+      position.y = 0;
+   pacman->setPosition(position);
+}
+
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
      switch(keyCode){
         case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
         case EventKeyboard::KeyCode::KEY_A: {
-            auto moveLeft = MoveBy::create(0, Vec2(-1, 0));
+            auto moveLeft = MoveBy::create(0.2, Vec2(-32, 0));
             Action* action = RepeatForever::create(moveLeft);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(180.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
         case EventKeyboard::KeyCode::KEY_D: {
-            auto moveRight = MoveBy::create(0, Vec2(1,0));
+            auto moveRight = MoveBy::create(0.2, Vec2(32,0));
             Action* action = RepeatForever::create(moveRight);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(0.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_UP_ARROW:
         case EventKeyboard::KeyCode::KEY_W: {
-            auto moveUp = MoveBy::create(0, Vec2(0, 1));
+            auto moveUp = MoveBy::create(0.2, Vec2(0, 32));
             Action* action = RepeatForever::create(moveUp);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(-90.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
         case EventKeyboard::KeyCode::KEY_S: {
-            auto moveDown = MoveBy::create(0, Vec2(0, -1));
+            auto moveDown = MoveBy::create(0.2, Vec2(0, -32));
             Action* action = RepeatForever::create(moveDown);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(90.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
     }
