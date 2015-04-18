@@ -50,7 +50,7 @@ bool Level::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    auto label = Label::createWithTTF(labelConfig, "Hello, Bitches!");
+    auto label = Label::createWithTTF(labelConfig, "Hello");
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
 //    label->enableShadow(Color4B::WHITE);
