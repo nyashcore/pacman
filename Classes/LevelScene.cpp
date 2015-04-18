@@ -110,22 +110,22 @@ bool Level::init()
 
 //    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
 //    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
-    pacman = Sprite::create("sprites/Pacman.png");
-    pacman->setPosition(this->getBoundingBox().getMidX(), this->getBoundingBox().getMidY());
 //    physicsBody->setDynamic(false);
-    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
-    physicsBody->setGravityEnable(false);
-    physicsBody->setCategoryBitmask(3);
-    physicsBody->setCollisionBitmask(1);
-    physicsBody->setContactTestBitmask(1);
-    pacman->setPhysicsBody(physicsBody);
-//    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
-    pacman->setPosition(Vec2(300,250));
-    pacman->setRotation(0);
-    pacman->setScale(1);
-    pacman->setAnchorPoint(Vec2(0.5, 0.5));
-    pacman->setTag(15);
+//    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
+//    physicsBody->setGravityEnable(false);
+//    physicsBody->setCategoryBitmask(3);
+//    physicsBody->setCollisionBitmask(1);
+//    physicsBody->setContactTestBitmask(1);
+//    pacman->setPhysicsBody(physicsBody);
+////    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
+//    pacman->setPosition(Vec2(300,250));
+//    pacman->setRotation(0);
+//    pacman->setScale(1);
+//    pacman->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman->setTag(15);
 //    pacman->setColor(Color3B::BLUE);
+    Pacman obj;
+    pacman = obj.create();
     this->addChild(pacman, 1);
 
        Vector<SpriteFrame*> animFrames;

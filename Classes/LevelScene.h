@@ -5,6 +5,7 @@
 #include "GameOverScene.cpp"
 #include <iostream>
 #include "Ghost.cpp"
+#include "Pacman.cpp"
 #include "../external/tinyxml2/tinyxml2.h"
 
 class Level : public cocos2d::Layer

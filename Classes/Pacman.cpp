@@ -10,6 +10,18 @@ Sprite* Pacman::create()
     // create the animation out of the frames
     Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
     Animate* animate = Animate::create(animation);
-    pacman->setPosition(100, 100);
+    pacman->setPosition(300, 300);
+    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
+    physicsBody->setGravityEnable(false);
+    physicsBody->setCategoryBitmask(3);
+    physicsBody->setCollisionBitmask(1);
+    physicsBody->setContactTestBitmask(1);
+    pacman->setPhysicsBody(physicsBody);
+//    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
+    pacman->setPosition(Vec2(300,250));
+    pacman->setRotation(0);
+    pacman->setScale(1);
+    pacman->setAnchorPoint(Vec2(0.5, 0.5));
+    pacman->setTag(15);
     return pacman;
 }
