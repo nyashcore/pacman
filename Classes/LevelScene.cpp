@@ -78,7 +78,15 @@ bool Level::init()
         pWallElement->QueryFloatAttribute("x", &x);
         pWallElement->QueryFloatAttribute("y", &y);
         auto wall = Sprite::createWithSpriteFrame(wallFrame);
+        auto physicsBody = PhysicsBody::createBox(Size(32.0f , 32.0f ), PhysicsMaterial(0.1f, 1.0f, 0.0f));
+        physicsBody->setGravityEnable(false);
+        physicsBody->setDynamic(false);
+        physicsBody->setCategoryBitmask(3);
+        physicsBody->setCollisionBitmask(1);
+        physicsBody->setContactTestBitmask(1);
+        wall->setPhysicsBody(physicsBody);
         wall->setPosition(Vec2(x, y));
+        wall->setTag(10);
         this->addChild(wall, 0);
         pWallElement = pWallElement->NextSiblingElement("wall");
     }
@@ -103,7 +111,7 @@ bool Level::init()
     auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
     auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
 //    physicsBody->setDynamic(false);
-    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2);
+    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
     physicsBody->setGravityEnable(false);
     physicsBody->setCategoryBitmask(3);
     physicsBody->setCollisionBitmask(1);
@@ -114,6 +122,7 @@ bool Level::init()
     pacman->setRotation(0);
     pacman->setScale(1);
     pacman->setAnchorPoint(Vec2(0.5, 0.5));
+    pacman->setTag(15);
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman, 1);
 
@@ -127,7 +136,7 @@ bool Level::init()
 
 //    physicsBody1->setDynamic(false);
     auto pacman1 = Sprite::create("CloseNormal.png");
-    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2);
+    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
     physicsBody1->setDynamic(false);
     physicsBody1->setGravityEnable(false);
     physicsBody1->setCategoryBitmask(1);
@@ -138,6 +147,7 @@ bool Level::init()
     pacman1->setRotation(0);
     pacman1->setScale(1);
     pacman1->setAnchorPoint(Vec2(0.5, 0.5));
+    pacman1->setTag(20);
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
 
@@ -201,8 +211,21 @@ void Level::menuRestartCallback(Ref* pSender)
 
 bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 {
-    auto scene = GameOver::createScene();
-    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+
+    auto nodeA = contact.getShapeA()->getBody()->getNode();
+    auto nodeB = contact.getShapeB()->getBody()->getNode();
+    if( nodeA && nodeB ) {
+        if( nodeA->getTag() == 20 || nodeB->getTag() == 20 ) {
+            auto scene = GameOver::createScene();
+            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+        } else if( nodeA->getTag() == 10 || nodeB->getTag() == 10 ) {
+            if( nodeA->getTag() == 15 ) {
+                nodeA->stopAllActionsByTag(1);
+            } else if ( nodeB->getTag() == 15 ) {
+                nodeB->stopAllActions();
+            }
+        }
+    }
 }
 
 void Level::update(float delta){
