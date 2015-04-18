@@ -58,11 +58,11 @@ bool Level::init()
     label->enableOutline(Color4B::GRAY, 1);
     this->addChild(label, 1);
 
-    auto sprite = Sprite::create("HelloWorld.png");
+   // auto sprite = Sprite::create("HelloWorld.png");
 
     // position the sprite on the center of the screen
-    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-    this->addChild(sprite, 0);
+//    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
+//    this->addChild(sprite, 0);
 
 
 
@@ -108,8 +108,10 @@ bool Level::init()
     auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
-    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
-    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+//    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
+//    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
+    pacman = Sprite::create("sprites/Pacman.png");
+    pacman->setPosition(this->getBoundingBox().getMidX(), this->getBoundingBox().getMidY());
 //    physicsBody->setDynamic(false);
     auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
     physicsBody->setGravityEnable(false);
@@ -126,16 +128,18 @@ bool Level::init()
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman, 1);
 
-    Vector<SpriteFrame*> animPacman;
-    animPacman.reserve(2);
-    animPacman.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png"));
-    animPacman.pushBack(SpriteFrameCache::getInstance()->getSpriteFrameByName("PacmanRound.png"));
-    Animation* animation = Animation::createWithSpriteFrames(animPacman, 0.25f);
+       Vector<SpriteFrame*> animFrames;
+    animFrames.reserve(2);
+    animFrames.pushBack(SpriteFrame::create("sprites/Pacman.png", Rect(0,0,31,31)));
+    animFrames.pushBack(SpriteFrame::create("sprites/PacmanRound.png", Rect(0,0,31,31)));
+    // create the animation out of the frames
+    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
     Animate* animate = Animate::create(animation);
-    pacman->runAction(RepeatForever::create(animate));
 
+    // run it and repeat it forever
+    pacman->runAction(RepeatForever::create(animate));
 //    physicsBody1->setDynamic(false);
-    auto pacman1 = Sprite::create("CloseNormal.png");
+    auto pacman1 = Sprite::create("sprites/RedGhost.png");
     auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
     physicsBody1->setDynamic(false);
     physicsBody1->setGravityEnable(false);
@@ -151,6 +155,14 @@ bool Level::init()
 //    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
 
+    auto moveBy1 = MoveBy::create(1, Vec2(80,0));
+    auto moveBy2 = MoveBy::create(1, Vec2(0,-80));
+    auto moveBy12 = MoveBy::create(1, Vec2(-80,0));
+    auto moveBy21 = MoveBy::create(1, Vec2(0,80));
+    auto seq12 = Sequence::create(moveBy1, moveBy2, moveBy12, moveBy21, nullptr);
+    pacman1->runAction(RepeatForever::create(seq12));
+
+
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(Level::onKeyPressed, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, pacman);
@@ -158,7 +170,6 @@ bool Level::init()
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(Level::onContactBegin, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
-//    schedule(CC_SCHEDULE_SELECTOR(PhysicsDemoCollisionProcessing::tick), 0.3f);
 
     auto delay = DelayTime::create(0.25);
     auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
@@ -228,47 +239,64 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
     }
 }
 
+void Level::update(float delta){
+   auto position = pacman->getPosition();
+   if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+      position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
+   if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+      position.x = 0;
+   if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+      position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
+   if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+      position.y = 0;
+   pacman->setPosition(position);
+}
+
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
      switch(keyCode){
         case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
         case EventKeyboard::KeyCode::KEY_A: {
-            auto moveLeft = MoveBy::create(0, Vec2(-1, 0));
+            auto moveLeft = MoveBy::create(0.2, Vec2(-32, 0));
             Action* action = RepeatForever::create(moveLeft);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(180.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
         case EventKeyboard::KeyCode::KEY_D: {
-            auto moveRight = MoveBy::create(0, Vec2(1,0));
+            auto moveRight = MoveBy::create(0.2, Vec2(32,0));
             Action* action = RepeatForever::create(moveRight);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(0.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_UP_ARROW:
         case EventKeyboard::KeyCode::KEY_W: {
-            auto moveUp = MoveBy::create(0, Vec2(0, 1));
+            auto moveUp = MoveBy::create(0.2, Vec2(0, 32));
             Action* action = RepeatForever::create(moveUp);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(-90.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
         case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
         case EventKeyboard::KeyCode::KEY_S: {
-            auto moveDown = MoveBy::create(0, Vec2(0, -1));
+            auto moveDown = MoveBy::create(0.2, Vec2(0, -32));
             Action* action = RepeatForever::create(moveDown);
             action->setTag(1);
             event->getCurrentTarget()->stopAllActionsByTag(1);
             event->getCurrentTarget()->setRotation(90.0f);
             event->getCurrentTarget()->runAction(action);
+            this->scheduleUpdate();
             break;
         }
     }

@@ -22,6 +22,9 @@ public:
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     // implement the "static create()" method manually
     CREATE_FUNC(Level);
+    void update(float) override;
+private:
+   cocos2d::Sprite* pacman;
 };
 
 #endif // __LEVEL_SCENE_H__
