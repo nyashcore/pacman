@@ -29,7 +29,8 @@ bool Level::init()
     labelConfig.outlineSize = 0;
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
-     auto map = TMXTiledMap::create("map/pacman.tmx");
+
+    auto map = TMXTiledMap::create("map/pacman.tmx");
     addChild(map, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
@@ -50,7 +51,7 @@ bool Level::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    auto label = Label::createWithTTF(labelConfig, "Hello, Bitches!");
+    auto label = Label::createWithTTF(labelConfig, "Hello");
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
 //    label->enableShadow(Color4B::WHITE);
@@ -110,22 +111,22 @@ bool Level::init()
 
 //    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
 //    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
-    pacman = Sprite::create("sprites/Pacman.png");
-    pacman->setPosition(this->getBoundingBox().getMidX(), this->getBoundingBox().getMidY());
 //    physicsBody->setDynamic(false);
-    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
-    physicsBody->setGravityEnable(false);
-    physicsBody->setCategoryBitmask(3);
-    physicsBody->setCollisionBitmask(1);
-    physicsBody->setContactTestBitmask(1);
-    pacman->setPhysicsBody(physicsBody);
-//    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
-    pacman->setPosition(Vec2(300,250));
-    pacman->setRotation(0);
-    pacman->setScale(1);
-    pacman->setAnchorPoint(Vec2(0.5, 0.5));
-    pacman->setTag(15);
+//    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
+//    physicsBody->setGravityEnable(false);
+//    physicsBody->setCategoryBitmask(3);
+//    physicsBody->setCollisionBitmask(1);
+//    physicsBody->setContactTestBitmask(1);
+//    pacman->setPhysicsBody(physicsBody);
+////    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
+//    pacman->setPosition(Vec2(300,250));
+//    pacman->setRotation(0);
+//    pacman->setScale(1);
+//    pacman->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman->setTag(15);
 //    pacman->setColor(Color3B::BLUE);
+    Pacman obj;
+    pacman = obj.create();
     this->addChild(pacman, 1);
 
        Vector<SpriteFrame*> animFrames;
@@ -139,20 +140,21 @@ bool Level::init()
     // run it and repeat it forever
     pacman->runAction(RepeatForever::create(animate));
 //    physicsBody1->setDynamic(false);
-    auto pacman1 = Sprite::create("sprites/RedGhost.png");
-    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
-    physicsBody1->setDynamic(false);
-    physicsBody1->setGravityEnable(false);
-    physicsBody1->setCategoryBitmask(1);
-    physicsBody1->setCollisionBitmask(3);
-    physicsBody1->setContactTestBitmask(1);
-    pacman1->setPhysicsBody(physicsBody1);
-    pacman1->setPosition(Vec2(340,250));
-    pacman1->setRotation(0);
-    pacman1->setScale(1);
-    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
-    pacman1->setTag(20);
-//    pacman->setColor(Color3B::BLUE);
+    Ghost ghost1;
+    auto pacman1 = ghost1.create();
+//    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
+//    physicsBody1->setDynamic(false);
+//    physicsBody1->setGravityEnable(false);
+//    physicsBody1->setCategoryBitmask(1);
+//    physicsBody1->setCollisionBitmask(3);
+//    physicsBody1->setContactTestBitmask(1);
+//    pacman1->setPhysicsBody(physicsBody1);
+//    pacman1->setPosition(Vec2(340,250));
+//    pacman1->setRotation(0);
+//    pacman1->setScale(1);
+//    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
+//    pacman1->setTag(20);
+////    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
 
     auto moveBy1 = MoveBy::create(1, Vec2(80,0));
