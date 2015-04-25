@@ -25,8 +25,11 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(Level);
     void update(float) override;
+    cocos2d::Point tileCoordForPosition(cocos2d::Point position);
 private:
-   cocos2d::Sprite* pacman;
+    cocos2d::Sprite* pacman;
+    cocos2d::TMXTiledMap *_tileMap;
+    cocos2d::TMXLayer *_walls;
 };
 
 #endif // __LEVEL_SCENE_H__

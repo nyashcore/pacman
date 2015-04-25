@@ -30,8 +30,9 @@ bool Level::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    auto map = TMXTiledMap::create("map/pacman.tmx");
-    addChild(map, 0, 99);
+    _tileMap = TMXTiledMap::create("map/level1.tmx");
+    _walls = _tileMap->layerNamed("Walls");
+    addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
@@ -242,16 +243,16 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 }
 
 void Level::update(float delta){
-   auto position = pacman->getPosition();
-   if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+    auto position = pacman->getPosition();
+    if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
-   if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+    if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
       position.x = 0;
-   if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+    if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
       position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
-   if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+    if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
       position.y = 0;
-   pacman->setPosition(position);
+    pacman->setPosition(position);
 }
 
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
@@ -259,47 +260,94 @@ void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
      switch(keyCode){
         case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
         case EventKeyboard::KeyCode::KEY_A: {
-            auto moveLeft = MoveBy::create(0.2, Vec2(-32, 0));
-            Action* action = RepeatForever::create(moveLeft);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(180.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
+            Point position = pacman->getPosition();
+            position.x -= 32;
+            position.y -= 15;
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            position.y += 30;
+            tileCoord = tileCoordForPosition(position);
+            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+            if(!tileGid && !tileGid1){
+                auto moveLeft = MoveBy::create(0.2, Vec2(-32, 0));
+                Action* action = RepeatForever::create(moveLeft);
+                action->setTag(1);
+                event->getCurrentTarget()->stopAllActionsByTag(1);
+                event->getCurrentTarget()->setRotation(180.0f);
+                event->getCurrentTarget()->runAction(action);
+                this->scheduleUpdate();
+            }
             break;
         }
         case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
         case EventKeyboard::KeyCode::KEY_D: {
-            auto moveRight = MoveBy::create(0.2, Vec2(32,0));
-            Action* action = RepeatForever::create(moveRight);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(0.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
+            Point position = pacman->getPosition();
+            position.x += 32;
+            position.y -= 15;
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            position.y += 30;
+            tileCoord = tileCoordForPosition(position);
+            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+            if(!tileGid && !tileGid1){
+                auto moveRight = MoveBy::create(0.2, Vec2(32,0));
+                Action* action = RepeatForever::create(moveRight);
+                action->setTag(1);
+                event->getCurrentTarget()->stopAllActionsByTag(1);
+                event->getCurrentTarget()->setRotation(0.0f);
+                event->getCurrentTarget()->runAction(action);
+                this->scheduleUpdate();
+            }
             break;
         }
         case EventKeyboard::KeyCode::KEY_UP_ARROW:
         case EventKeyboard::KeyCode::KEY_W: {
-            auto moveUp = MoveBy::create(0.2, Vec2(0, 32));
-            Action* action = RepeatForever::create(moveUp);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(-90.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
+            Point position = pacman->getPosition();
+            position.y += 32;
+            position.x -= 15;
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            position.x += 30;
+            tileCoord = tileCoordForPosition(position);
+            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+            if(!tileGid && !tileGid1){
+                auto moveUp = MoveBy::create(0.2, Vec2(0, 32));
+                Action* action = RepeatForever::create(moveUp);
+                action->setTag(1);
+                event->getCurrentTarget()->stopAllActionsByTag(1);
+                event->getCurrentTarget()->setRotation(-90.0f);
+                event->getCurrentTarget()->runAction(action);
+                this->scheduleUpdate();
+            }
             break;
         }
         case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
         case EventKeyboard::KeyCode::KEY_S: {
-            auto moveDown = MoveBy::create(0.2, Vec2(0, -32));
-            Action* action = RepeatForever::create(moveDown);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(90.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
+            Point position = pacman->getPosition();
+            position.y -= 32;
+            position.x -= 15;
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            position.x += 30;
+            tileCoord = tileCoordForPosition(position);
+            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+            if(!tileGid && !tileGid1){
+                auto moveDown = MoveBy::create(0.2, Vec2(0, -32));
+                Action* action = RepeatForever::create(moveDown);
+                action->setTag(1);
+                event->getCurrentTarget()->stopAllActionsByTag(1);
+                event->getCurrentTarget()->setRotation(90.0f);
+                event->getCurrentTarget()->runAction(action);
+                this->scheduleUpdate();
+            }
             break;
         }
     }
+}
+
+Point Level::tileCoordForPosition(Point position)
+{
+	int x = position.x / _tileMap->getTileSize().width;
+	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - position.y) / _tileMap->getTileSize().height;
+	return Point(x, y);
 }
