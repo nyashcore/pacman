@@ -392,102 +392,104 @@ Point Level::tileCoordForPosition(Point position)
 {
 	int x = position.x / _tileMap->getTileSize().width;
 	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - position.y) / _tileMap->getTileSize().height;
-	return Point(x, y);
+    return Point(x, y);
 }
 
 void Level::onKeyHold(float interval){
 
-		if(std::find(heldKeys.begin(), heldKeys.end(), UP_ARROW) != heldKeys.end()){
-            Point position = pacman->getPosition();
-            position.y += 32;
-            position.x -= 15;
-            Point tileCoord = tileCoordForPosition(position);
-            int tileGid = _walls->getTileGIDAt(tileCoord);
-            position.x += 30;
-            tileCoord = tileCoordForPosition(position);
-            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-            if(!tileGid && !tileGid1){
-                auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
-                Action* action = RepeatForever::create(moveUp);
-                action->setTag(1);
-                pacman->stopAllActionsByTag(1);
-                pacman->setRotation(-90.0f);
-                pacman->runAction(action);
-                flag = 3;
-                this->scheduleUpdate();
-            }
-		}
+    if(std::find(heldKeys.begin(), heldKeys.end(), UP_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.y += 32;
+        position.x -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.x += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), UP_ARROW), heldKeys.end());
+            auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
+            Action* action = RepeatForever::create(moveUp);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(-90.0f);
+            pacman->runAction(action);
+            flag = 3;
+            this->scheduleUpdate();
+        }
+    }
 
-		if(std::find(heldKeys.begin(), heldKeys.end(), DOWN_ARROW) != heldKeys.end()){
-            Point position = pacman->getPosition();
-            position.y -= 32;
-            position.x -= 15;
-            Point tileCoord = tileCoordForPosition(position);
-            int tileGid = _walls->getTileGIDAt(tileCoord);
-            position.x += 30;
-            tileCoord = tileCoordForPosition(position);
-            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-            if(!tileGid && !tileGid1){
-                auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
-                Action* action = RepeatForever::create(moveDown);
-                action->setTag(1);
-                pacman->stopAllActionsByTag(1);
-                pacman->setRotation(90.0f);
-                pacman->runAction(action);
-                flag = 4;
-                this->scheduleUpdate();
-            }
-		}
+    if(std::find(heldKeys.begin(), heldKeys.end(), DOWN_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.y -= 32;
+        position.x -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.x += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), DOWN_ARROW), heldKeys.end());
+            auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
+            Action* action = RepeatForever::create(moveDown);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(90.0f);
+            pacman->runAction(action);
+            flag = 4;
+            this->scheduleUpdate();
+        }
+    }
 
-		if(std::find(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW) != heldKeys.end()){
-            Point position = pacman->getPosition();
-            position.x += 32;
-            position.y -= 15;
-            Point tileCoord = tileCoordForPosition(position);
-            int tileGid = _walls->getTileGIDAt(tileCoord);
-            position.y += 30;
-            tileCoord = tileCoordForPosition(position);
-            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-            if(!tileGid && !tileGid1){
-                auto moveRight = MoveBy::create(0.3, Vec2(32,0));
-                Action* action = RepeatForever::create(moveRight);
-                action->setTag(1);
-                pacman->stopAllActionsByTag(1);
-                pacman->setRotation(0.0f);
-                pacman->runAction(action);
-                flag = 2;
-                this->scheduleUpdate();
-            }
-		}
+    if(std::find(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.x += 32;
+        position.y -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.y += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW), heldKeys.end());
+            auto moveRight = MoveBy::create(0.3, Vec2(32,0));
+            Action* action = RepeatForever::create(moveRight);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(0.0f);
+            pacman->runAction(action);
+            flag = 2;
+            this->scheduleUpdate();
+        }
+    }
 
-		if(std::find(heldKeys.begin(), heldKeys.end(), LEFT_ARROW) != heldKeys.end()){
-            Point position = pacman->getPosition();
-            position.x -= 32;
-            position.y -= 15;
-            Point tileCoord = tileCoordForPosition(position);
-            int tileGid = _walls->getTileGIDAt(tileCoord);
-            position.y += 30;
-            tileCoord = tileCoordForPosition(position);
-            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-            if(!tileGid && !tileGid1){
-                auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
-                Action* action = RepeatForever::create(moveLeft);
-                action->setTag(1);
-                pacman->stopAllActionsByTag(1);
-                pacman->setRotation(180.0f);
-                pacman->runAction(action);
-                flag = 1;
-                this->scheduleUpdate();
-            }
-		}
+    if(std::find(heldKeys.begin(), heldKeys.end(), LEFT_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.x -= 32;
+        position.y -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.y += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), LEFT_ARROW), heldKeys.end());
+            auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
+            Action* action = RepeatForever::create(moveLeft);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(180.0f);
+            pacman->runAction(action);
+            flag = 1;
+            this->scheduleUpdate();
+        }
+    }
 
 }
 
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	if(std::find(heldKeys.begin(), heldKeys.end(), keyCode) == heldKeys.end()){
 			heldKeys.push_back(keyCode);
-	}
 }
 
 void Level::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
