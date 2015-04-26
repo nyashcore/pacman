@@ -30,7 +30,7 @@ bool Level::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    auto map = TMXTiledMap::create("map/pacman.tmx");
+    _tileMap = TMXTiledMap::create("map/pacman.tmx");
     addChild(map, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
@@ -242,16 +242,16 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 }
 
 void Level::update(float delta){
-   auto position = pacman->getPosition();
-   if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
-      position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
-   if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
-      position.x = 0;
-   if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
-      position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
-   if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
-      position.y = 0;
-   pacman->setPosition(position);
+    auto position = pacman->getPosition();
+    if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+        position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
+    if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+        position.x = 0;
+    if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+        position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
+    if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+        position.y = 0;
+    pacman->setPosition(position);
 }
 
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
