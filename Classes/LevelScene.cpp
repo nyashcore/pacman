@@ -30,8 +30,9 @@ bool Level::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    _tileMap = TMXTiledMap::create("map/pacman.tmx");
-    addChild(map, 0, 99);
+    _tileMap = TMXTiledMap::create("map/level1.tmx");
+    _walls = _tileMap->layerNamed("Walls");
+    addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
@@ -167,6 +168,7 @@ bool Level::init()
 
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(Level::onKeyPressed, this);
+    listener->onKeyReleased = CC_CALLBACK_2(Level::onKeyReleased, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, pacman);
 
     auto contactListener = EventListenerPhysicsContact::create();
@@ -197,6 +199,8 @@ bool Level::init()
     auto move_ease_in_back = EaseBounceOut::create(move2->clone());
     auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
     blueGhost->runAction(RepeatForever::create(seq1));
+
+    this->schedule(schedule_selector(Level::onKeyHold));
 
     return true;
 }
@@ -244,6 +248,7 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 void Level::update(float delta){
     auto position = pacman->getPosition();
     if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+<<<<<<< HEAD
         position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
     if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
         position.x = 0;
@@ -252,54 +257,253 @@ void Level::update(float delta){
     if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
         position.y = 0;
     pacman->setPosition(position);
+=======
+      position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
+    if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+      position.x = 0;
+    if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+      position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
+    if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+      position.y = 0;
+    pacman->setPosition(position);
+    if (flag == 1) {
+        position.x -= 17;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        if (tileGid) {
+            pacman->stopAllActionsByTag(1);
+            flag = 0;
+        }
+    }
+    if (flag == 2) {
+        position.x += 17;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        if (tileGid) {
+            pacman->stopAllActionsByTag(1);
+            flag = 0;
+        }
+    }
+    if (flag == 3) {
+        position.y += 17;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        if (tileGid) {
+            pacman->stopAllActionsByTag(1);
+            flag = 0;
+        }
+    }
+    if (flag == 4) {
+        position.y -= 17;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        if (tileGid) {
+            pacman->stopAllActionsByTag(1);
+            flag = 0;
+        }
+    }
+>>>>>>> 991e0da5bcd4f3884a63778a13e61a14f6e5a30f
+}
+
+//void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
+//{
+//     switch(keyCode){
+//        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+//        case EventKeyboard::KeyCode::KEY_A: {
+//            Point position = pacman->getPosition();
+//            position.x -= 32;
+//            position.y -= 15;
+//            Point tileCoord = tileCoordForPosition(position);
+//            int tileGid = _walls->getTileGIDAt(tileCoord);
+//            position.y += 30;
+//            tileCoord = tileCoordForPosition(position);
+//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+//            if(!tileGid && !tileGid1){
+//                auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
+//                Action* action = RepeatForever::create(moveLeft);
+//                action->setTag(1);
+//                event->getCurrentTarget()->stopAllActionsByTag(1);
+//                event->getCurrentTarget()->setRotation(180.0f);
+//                event->getCurrentTarget()->runAction(action);
+//                flag = 1;
+//                this->scheduleUpdate();
+//            }
+//            break;
+//        }
+//        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+//        case EventKeyboard::KeyCode::KEY_D: {
+//            Point position = pacman->getPosition();
+//            position.x += 32;
+//            position.y -= 15;
+//            Point tileCoord = tileCoordForPosition(position);
+//            int tileGid = _walls->getTileGIDAt(tileCoord);
+//            position.y += 30;
+//            tileCoord = tileCoordForPosition(position);
+//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+//            if(!tileGid && !tileGid1){
+//                auto moveRight = MoveBy::create(0.3, Vec2(32,0));
+//                Action* action = RepeatForever::create(moveRight);
+//                action->setTag(1);
+//                event->getCurrentTarget()->stopAllActionsByTag(1);
+//                event->getCurrentTarget()->setRotation(0.0f);
+//                event->getCurrentTarget()->runAction(action);
+//                flag = 2;
+//                this->scheduleUpdate();
+//            }
+//            break;
+//        }
+//        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+//        case EventKeyboard::KeyCode::KEY_W: {
+//            Point position = pacman->getPosition();
+//            position.y += 32;
+//            position.x -= 15;
+//            Point tileCoord = tileCoordForPosition(position);
+//            int tileGid = _walls->getTileGIDAt(tileCoord);
+//            position.x += 30;
+//            tileCoord = tileCoordForPosition(position);
+//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+//            if(!tileGid && !tileGid1){
+//                auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
+//                Action* action = RepeatForever::create(moveUp);
+//                action->setTag(1);
+//                event->getCurrentTarget()->stopAllActionsByTag(1);
+//                event->getCurrentTarget()->setRotation(-90.0f);
+//                event->getCurrentTarget()->runAction(action);
+//                flag = 3;
+//                this->scheduleUpdate();
+//            }
+//            break;
+//        }
+//        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+//        case EventKeyboard::KeyCode::KEY_S: {
+//            Point position = pacman->getPosition();
+//            position.y -= 32;
+//            position.x -= 15;
+//            Point tileCoord = tileCoordForPosition(position);
+//            int tileGid = _walls->getTileGIDAt(tileCoord);
+//            position.x += 30;
+//            tileCoord = tileCoordForPosition(position);
+//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
+//            if(!tileGid && !tileGid1){
+//                auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
+//                Action* action = RepeatForever::create(moveDown);
+//                action->setTag(1);
+//                event->getCurrentTarget()->stopAllActionsByTag(1);
+//                event->getCurrentTarget()->setRotation(90.0f);
+//                event->getCurrentTarget()->runAction(action);
+//                flag = 4;
+//                this->scheduleUpdate();
+//            }
+//            break;
+//        }
+//    }
+//}
+
+Point Level::tileCoordForPosition(Point position)
+{
+	int x = position.x / _tileMap->getTileSize().width;
+	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - position.y) / _tileMap->getTileSize().height;
+    return Point(x, y);
+}
+
+void Level::onKeyHold(float interval){
+
+    if(std::find(heldKeys.begin(), heldKeys.end(), UP_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.y += 32;
+        position.x -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.x += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), UP_ARROW), heldKeys.end());
+            auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
+            Action* action = RepeatForever::create(moveUp);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(-90.0f);
+            pacman->runAction(action);
+            flag = 3;
+            this->scheduleUpdate();
+        }
+    }
+
+    if(std::find(heldKeys.begin(), heldKeys.end(), DOWN_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.y -= 32;
+        position.x -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.x += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), DOWN_ARROW), heldKeys.end());
+            auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
+            Action* action = RepeatForever::create(moveDown);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(90.0f);
+            pacman->runAction(action);
+            flag = 4;
+            this->scheduleUpdate();
+        }
+    }
+
+    if(std::find(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.x += 32;
+        position.y -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.y += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW), heldKeys.end());
+            auto moveRight = MoveBy::create(0.3, Vec2(32,0));
+            Action* action = RepeatForever::create(moveRight);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(0.0f);
+            pacman->runAction(action);
+            flag = 2;
+            this->scheduleUpdate();
+        }
+    }
+
+    if(std::find(heldKeys.begin(), heldKeys.end(), LEFT_ARROW) != heldKeys.end()){
+        Point position = pacman->getPosition();
+        position.x -= 32;
+        position.y -= 15;
+        Point tileCoord = tileCoordForPosition(position);
+        int tileGid = _walls->getTileGIDAt(tileCoord);
+        position.y += 30;
+        tileCoord = tileCoordForPosition(position);
+        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(!tileGid && !tileGid1){
+            heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), LEFT_ARROW), heldKeys.end());
+            auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
+            Action* action = RepeatForever::create(moveLeft);
+            action->setTag(1);
+            pacman->stopAllActionsByTag(1);
+            pacman->setRotation(180.0f);
+            pacman->runAction(action);
+            flag = 1;
+            this->scheduleUpdate();
+        }
+    }
+
 }
 
 void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
-     switch(keyCode){
-        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        case EventKeyboard::KeyCode::KEY_A: {
-            auto moveLeft = MoveBy::create(0.2, Vec2(-32, 0));
-            Action* action = RepeatForever::create(moveLeft);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(180.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
-            break;
-        }
-        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-        case EventKeyboard::KeyCode::KEY_D: {
-            auto moveRight = MoveBy::create(0.2, Vec2(32,0));
-            Action* action = RepeatForever::create(moveRight);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(0.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
-            break;
-        }
-        case EventKeyboard::KeyCode::KEY_UP_ARROW:
-        case EventKeyboard::KeyCode::KEY_W: {
-            auto moveUp = MoveBy::create(0.2, Vec2(0, 32));
-            Action* action = RepeatForever::create(moveUp);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(-90.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
-            break;
-        }
-        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        case EventKeyboard::KeyCode::KEY_S: {
-            auto moveDown = MoveBy::create(0.2, Vec2(0, -32));
-            Action* action = RepeatForever::create(moveDown);
-            action->setTag(1);
-            event->getCurrentTarget()->stopAllActionsByTag(1);
-            event->getCurrentTarget()->setRotation(90.0f);
-            event->getCurrentTarget()->runAction(action);
-            this->scheduleUpdate();
-            break;
-        }
-    }
+			heldKeys.push_back(keyCode);
+}
+
+void Level::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
+{
+	heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), keyCode), heldKeys.end());
 }
