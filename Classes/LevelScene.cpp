@@ -9,6 +9,12 @@ Scene* Level::createScene()
     auto layer = Level::create();
 //    layer->setPhyWorld(scene->getPhysicsWorld());
     scene->addChild(layer);
+
+    HudLayer *hud = new HudLayer();
+    hud->init();
+    scene->addChild(hud);
+    layer->_hud = hud;
+
     return scene;
 }
 
@@ -32,6 +38,7 @@ bool Level::init()
 
     _tileMap = TMXTiledMap::create("map/level1.tmx");
     _walls = _tileMap->layerNamed("Walls");
+    _food = _tileMap->layerNamed("Food");
     addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
@@ -74,35 +81,35 @@ bool Level::init()
 
     tinyxml2::XMLDocument doc;
     doc.LoadFile("../../../Resources/levels.xml");
-    float x, y;
-    tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("walls")->FirstChildElement("wall");
-    for(size_t i = 0; pWallElement != nullptr; i++) {
-        pWallElement->QueryFloatAttribute("x", &x);
-        pWallElement->QueryFloatAttribute("y", &y);
-        auto wall = Sprite::createWithSpriteFrame(wallFrame);
-        auto physicsBody = PhysicsBody::createBox(Size(32.0f , 32.0f ), PhysicsMaterial(0.1f, 1.0f, 0.0f));
-        physicsBody->setGravityEnable(false);
-        physicsBody->setDynamic(false);
-        physicsBody->setCategoryBitmask(3);
-        physicsBody->setCollisionBitmask(1);
-        physicsBody->setContactTestBitmask(1);
-        wall->setPhysicsBody(physicsBody);
-        wall->setPosition(Vec2(x, y));
-        wall->setTag(10);
-        this->addChild(wall, 0);
-        pWallElement = pWallElement->NextSiblingElement("wall");
-    }
-
-    auto coinFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Food.png");
-    tinyxml2::XMLElement* pCoinElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("food")->FirstChildElement("coin");
-    for(size_t i = 0; pCoinElement != nullptr; i++) {
-        pCoinElement->QueryFloatAttribute("x", &x);
-        pCoinElement->QueryFloatAttribute("y", &y);
-        auto coin = Sprite::createWithSpriteFrame(coinFrame);
-        coin->setPosition(Vec2(x, y));
-        this->addChild(coin, 0);
-        pCoinElement = pCoinElement->NextSiblingElement("coin");
-    }
+    tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map");
+    pWallElement->QueryIntAttribute("count", &(this->count));
+//    for(size_t i = 0; pWallElement != nullptr; i++) {
+//        pWallElement->QueryFloatAttribute("x", &x);
+//        pWallElement->QueryFloatAttribute("y", &y);
+//        auto wall = Sprite::createWithSpriteFrame(wallFrame);
+//        auto physicsBody = PhysicsBody::createBox(Size(32.0f , 32.0f ), PhysicsMaterial(0.1f, 1.0f, 0.0f));
+//        physicsBody->setGravityEnable(false);
+//        physicsBody->setDynamic(false);
+//        physicsBody->setCategoryBitmask(3);
+//        physicsBody->setCollisionBitmask(1);
+//        physicsBody->setContactTestBitmask(1);
+//        wall->setPhysicsBody(physicsBody);
+//        wall->setPosition(Vec2(x, y));
+//        wall->setTag(10);
+//        this->addChild(wall, 0);
+//        pWallElement = pWallElement->NextSiblingElement("wall");
+//    }
+//
+//    auto coinFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Food.png");
+//    tinyxml2::XMLElement* pCoinElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("food")->FirstChildElement("coin");
+//    for(size_t i = 0; pCoinElement != nullptr; i++) {
+//        pCoinElement->QueryFloatAttribute("x", &x);
+//        pCoinElement->QueryFloatAttribute("y", &y);
+//        auto coin = Sprite::createWithSpriteFrame(coinFrame);
+//        coin->setPosition(Vec2(x, y));
+//        this->addChild(coin, 0);
+//        pCoinElement = pCoinElement->NextSiblingElement("coin");
+//    }
 //    tinyxml2::XMLElement* titleElement = doc.FirstChildElement( "PLAY" )->FirstChildElement( "TITLE" );
 //    tinyxml2::XMLText* textNode = titleElement->FirstChild()->ToText();
 //    printf( "Name of play (2): %s\n", textNode->Value() );
@@ -247,14 +254,22 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 
 void Level::update(float delta){
     auto position = pacman->getPosition();
-    if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2))
+    if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2)) {
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
-    if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2)
+      return;
+    }
+    if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2) {
       position.x = 0;
-    if (position.y < 0 - (pacman->getBoundingBox().size.height / 2))
+      return;
+    }
+    if (position.y < 0 - (pacman->getBoundingBox().size.height / 2)) {
       position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
-    if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2)
+      return;
+    }
+    if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2) {
       position.y = 0;
+      return;
+    }
     pacman->setPosition(position);
     if (flag == 1) {
         position.x -= 17;
@@ -263,6 +278,14 @@ void Level::update(float delta){
         if (tileGid) {
             pacman->stopAllActionsByTag(1);
             flag = 0;
+        }
+        position.x += 17;
+        tileCoord = tileCoordForPosition(position);
+        tileGid = _food->getTileGIDAt(tileCoord);
+        if(tileGid) {
+            _food->removeTileAt(tileCoord);
+            _numCollected++;
+            _hud->numCollectedChanged(_numCollected);
         }
     }
     if (flag == 2) {
@@ -273,6 +296,14 @@ void Level::update(float delta){
             pacman->stopAllActionsByTag(1);
             flag = 0;
         }
+        position.x -= 17;
+        tileCoord = tileCoordForPosition(position);
+        tileGid = _food->getTileGIDAt(tileCoord);
+        if(tileGid) {
+            _food->removeTileAt(tileCoord);
+            _numCollected++;
+            _hud->numCollectedChanged(_numCollected);
+        }
     }
     if (flag == 3) {
         position.y += 17;
@@ -281,6 +312,14 @@ void Level::update(float delta){
         if (tileGid) {
             pacman->stopAllActionsByTag(1);
             flag = 0;
+        }
+        position.y -= 17;
+        tileCoord = tileCoordForPosition(position);
+        tileGid = _food->getTileGIDAt(tileCoord);
+        if(tileGid) {
+            _food->removeTileAt(tileCoord);
+            _numCollected++;
+            _hud->numCollectedChanged(_numCollected);
         }
     }
     if (flag == 4) {
@@ -291,102 +330,20 @@ void Level::update(float delta){
             pacman->stopAllActionsByTag(1);
             flag = 0;
         }
+        position.y += 17;
+        tileCoord = tileCoordForPosition(position);
+        tileGid = _food->getTileGIDAt(tileCoord);
+        if(tileGid) {
+            _food->removeTileAt(tileCoord);
+            _numCollected++;
+            _hud->numCollectedChanged(_numCollected);
+        }
+    }
+    if(_numCollected == this->count) {
+        auto scene = Level::createScene();
+        Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
     }
 }
-
-//void Level::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
-//{
-//     switch(keyCode){
-//        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-//        case EventKeyboard::KeyCode::KEY_A: {
-//            Point position = pacman->getPosition();
-//            position.x -= 32;
-//            position.y -= 15;
-//            Point tileCoord = tileCoordForPosition(position);
-//            int tileGid = _walls->getTileGIDAt(tileCoord);
-//            position.y += 30;
-//            tileCoord = tileCoordForPosition(position);
-//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-//            if(!tileGid && !tileGid1){
-//                auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
-//                Action* action = RepeatForever::create(moveLeft);
-//                action->setTag(1);
-//                event->getCurrentTarget()->stopAllActionsByTag(1);
-//                event->getCurrentTarget()->setRotation(180.0f);
-//                event->getCurrentTarget()->runAction(action);
-//                flag = 1;
-//                this->scheduleUpdate();
-//            }
-//            break;
-//        }
-//        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-//        case EventKeyboard::KeyCode::KEY_D: {
-//            Point position = pacman->getPosition();
-//            position.x += 32;
-//            position.y -= 15;
-//            Point tileCoord = tileCoordForPosition(position);
-//            int tileGid = _walls->getTileGIDAt(tileCoord);
-//            position.y += 30;
-//            tileCoord = tileCoordForPosition(position);
-//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-//            if(!tileGid && !tileGid1){
-//                auto moveRight = MoveBy::create(0.3, Vec2(32,0));
-//                Action* action = RepeatForever::create(moveRight);
-//                action->setTag(1);
-//                event->getCurrentTarget()->stopAllActionsByTag(1);
-//                event->getCurrentTarget()->setRotation(0.0f);
-//                event->getCurrentTarget()->runAction(action);
-//                flag = 2;
-//                this->scheduleUpdate();
-//            }
-//            break;
-//        }
-//        case EventKeyboard::KeyCode::KEY_UP_ARROW:
-//        case EventKeyboard::KeyCode::KEY_W: {
-//            Point position = pacman->getPosition();
-//            position.y += 32;
-//            position.x -= 15;
-//            Point tileCoord = tileCoordForPosition(position);
-//            int tileGid = _walls->getTileGIDAt(tileCoord);
-//            position.x += 30;
-//            tileCoord = tileCoordForPosition(position);
-//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-//            if(!tileGid && !tileGid1){
-//                auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
-//                Action* action = RepeatForever::create(moveUp);
-//                action->setTag(1);
-//                event->getCurrentTarget()->stopAllActionsByTag(1);
-//                event->getCurrentTarget()->setRotation(-90.0f);
-//                event->getCurrentTarget()->runAction(action);
-//                flag = 3;
-//                this->scheduleUpdate();
-//            }
-//            break;
-//        }
-//        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-//        case EventKeyboard::KeyCode::KEY_S: {
-//            Point position = pacman->getPosition();
-//            position.y -= 32;
-//            position.x -= 15;
-//            Point tileCoord = tileCoordForPosition(position);
-//            int tileGid = _walls->getTileGIDAt(tileCoord);
-//            position.x += 30;
-//            tileCoord = tileCoordForPosition(position);
-//            int tileGid1 = _walls->getTileGIDAt(tileCoord);
-//            if(!tileGid && !tileGid1){
-//                auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
-//                Action* action = RepeatForever::create(moveDown);
-//                action->setTag(1);
-//                event->getCurrentTarget()->stopAllActionsByTag(1);
-//                event->getCurrentTarget()->setRotation(90.0f);
-//                event->getCurrentTarget()->runAction(action);
-//                flag = 4;
-//                this->scheduleUpdate();
-//            }
-//            break;
-//        }
-//    }
-//}
 
 Point Level::tileCoordForPosition(Point position)
 {

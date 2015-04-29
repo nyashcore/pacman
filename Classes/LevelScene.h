@@ -16,6 +16,7 @@ const EventKeyboard::KeyCode DOWN_ARROW = EventKeyboard::KeyCode::KEY_DOWN_ARROW
 const EventKeyboard::KeyCode LEFT_ARROW = EventKeyboard::KeyCode::KEY_LEFT_ARROW;
 const EventKeyboard::KeyCode RIGHT_ARROW = EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
 #include "../external/tinyxml2/tinyxml2.h"
+#include "HudLayer.cpp"
 
 class Level : public cocos2d::Layer
 {
@@ -39,9 +40,13 @@ public:
     void update(float) override;
     cocos2d::Point tileCoordForPosition(cocos2d::Point position);
 private:
+    int count;
+    HudLayer *_hud;
+    int _numCollected;
     cocos2d::Sprite* pacman;
     cocos2d::TMXTiledMap *_tileMap;
     cocos2d::TMXLayer *_walls;
+    cocos2d::TMXLayer *_food;
     int flag;
 };
 
