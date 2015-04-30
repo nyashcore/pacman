@@ -21,6 +21,7 @@ const EventKeyboard::KeyCode LEFT_ARROW = EventKeyboard::KeyCode::KEY_LEFT_ARROW
 const EventKeyboard::KeyCode RIGHT_ARROW = EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
 #include "../external/tinyxml2/tinyxml2.h"
 #include "HudLayer.cpp"
+#define NUM_OF_LEVELS 3
 
 class Level : public cocos2d::Layer
 {

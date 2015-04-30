@@ -277,15 +277,19 @@ void Level::update(float delta){
     auto position = pacman->getPosition();
     if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2)) {
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
+      return;
     }
     if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2) {
       position.x = 0;
+      return;
     }
     if (position.y < 0 - (pacman->getBoundingBox().size.height / 2)) {
       position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
+      return;
     }
     if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2) {
       position.y = 0;
+      return;
     }
     pacman->setPosition(position);
     if (flag == 1) {
@@ -358,8 +362,13 @@ void Level::update(float delta){
     }
     if(_numCollected == this->count) {
         _numCollected = -1;
-        auto scene = Level::createScene(lvl+1);
-        Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+        if(lvl < NUM_OF_LEVELS) {
+            auto scene = Level::createScene(lvl+1);
+            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+        } else {
+            auto scene = GameOver::createScene();
+            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+        }
     }
 }
 
