@@ -2,11 +2,24 @@
 
 USING_NS_CC;
 
-Scene* Level::createScene()
+Level* Level::create(int level) {
+
+    Level *sc = new Level();
+    sc->setLvl(level);
+
+    if (sc->init()) {
+        sc->autorelease();
+    } else
+        sc = NULL;
+
+    return sc;
+}
+
+Scene* Level::createScene(int level)
 {
     auto scene = Scene::createWithPhysics();
     scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-    auto layer = Level::create();
+    auto layer = Level::create(level);
 //    layer->setPhyWorld(scene->getPhysicsWorld());
     scene->addChild(layer);
 
@@ -14,6 +27,7 @@ Scene* Level::createScene()
     hud->init();
     scene->addChild(hud);
     layer->_hud = hud;
+
 
     return scene;
 }
@@ -36,8 +50,14 @@ bool Level::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    _tileMap = TMXTiledMap::create("map/level1.tmx");
+    string str_map = "map/level";
+    std::stringstream oss_convert;
+    oss_convert << this->lvl;
+    str_map += oss_convert.str();
+    str_map += ".tmx";
+    _tileMap = TMXTiledMap::create(str_map);
     _walls = _tileMap->layerNamed("Walls");
+    count = _tileMap->getProperty("count").asByte();
     _food = _tileMap->layerNamed("Food");
     addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
@@ -82,7 +102,8 @@ bool Level::init()
     tinyxml2::XMLDocument doc;
     doc.LoadFile("../../../Resources/levels.xml");
     tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map");
-    pWallElement->QueryIntAttribute("count", &(this->count));
+//    pWallElement->QueryIntAttribute("count", &(this->count));
+
 //    for(size_t i = 0; pWallElement != nullptr; i++) {
 //        pWallElement->QueryFloatAttribute("x", &x);
 //        pWallElement->QueryFloatAttribute("y", &y);
@@ -229,7 +250,7 @@ void Level::menuCloseCallback(Ref* pSender)
 
 void Level::menuRestartCallback(Ref* pSender)
 {
-    auto scene = Level::createScene();
+    auto scene = Level::createScene(lvl);
     Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }
 
@@ -256,19 +277,15 @@ void Level::update(float delta){
     auto position = pacman->getPosition();
     if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2)) {
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
-      return;
     }
     if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2) {
       position.x = 0;
-      return;
     }
     if (position.y < 0 - (pacman->getBoundingBox().size.height / 2)) {
       position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
-      return;
     }
     if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2) {
       position.y = 0;
-      return;
     }
     pacman->setPosition(position);
     if (flag == 1) {
@@ -340,7 +357,8 @@ void Level::update(float delta){
         }
     }
     if(_numCollected == this->count) {
-        auto scene = Level::createScene();
+        _numCollected = -1;
+        auto scene = Level::createScene(lvl+1);
         Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
     }
 }

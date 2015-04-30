@@ -8,8 +8,12 @@
 #include "Pacman.cpp"
 #include <vector>
 #include <iterator>
+#include <cstdlib>
 #include <iostream>
+#include <stdio.h>
+#include <sstream>
 using std::vector;
+using std::string;
 const EventKeyboard::KeyCode ENTER = EventKeyboard::KeyCode::KEY_KP_ENTER;
 const EventKeyboard::KeyCode UP_ARROW = EventKeyboard::KeyCode::KEY_UP_ARROW;
 const EventKeyboard::KeyCode DOWN_ARROW = EventKeyboard::KeyCode::KEY_DOWN_ARROW;
@@ -22,7 +26,8 @@ class Level : public cocos2d::Layer
 {
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
-    static cocos2d::Scene* createScene();
+    static cocos2d::Scene* createScene(int);
+    static Level* create(int);
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();
@@ -39,7 +44,10 @@ public:
     CREATE_FUNC(Level);
     void update(float) override;
     cocos2d::Point tileCoordForPosition(cocos2d::Point position);
+    void setLvl(int level) { lvl = level; }
+    int getLvl(void) { return lvl; }
 private:
+    int lvl;
     int count;
     HudLayer *_hud;
     int _numCollected;
