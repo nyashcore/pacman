@@ -79,6 +79,6 @@ void StartMenu::menuCloseCallback(Ref* pSender)
 
 void StartMenu::menuRestartCallback(Ref* pSender)
 {
-    auto scene = Level::createScene();
+    auto scene = Level::createScene(1);
     Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }
