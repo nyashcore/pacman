@@ -154,8 +154,7 @@ bool Level::init()
 //    pacman->setAnchorPoint(Vec2(0.5, 0.5));
 //    pacman->setTag(15);
 //    pacman->setColor(Color3B::BLUE);
-    Pacman obj;
-    pacman = obj.create();
+    pacman = Pacman::getPacman();
     this->addChild(pacman, 1);
 
        Vector<SpriteFrame*> animFrames;
