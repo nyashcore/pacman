@@ -154,8 +154,7 @@ bool Level::init()
 //    pacman->setAnchorPoint(Vec2(0.5, 0.5));
 //    pacman->setTag(15);
 //    pacman->setColor(Color3B::BLUE);
-    Pacman obj;
-    pacman = obj.create();
+    pacman = Pacman::getPacman();
     this->addChild(pacman, 1);
 
        Vector<SpriteFrame*> animFrames;
@@ -256,7 +255,6 @@ void Level::menuRestartCallback(Ref* pSender)
 
 bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 {
-
     auto nodeA = contact.getShapeA()->getBody()->getNode();
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     if( nodeA && nodeB ) {
@@ -277,87 +275,100 @@ void Level::update(float delta){
     auto position = pacman->getPosition();
     if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2)) {
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
-      return;
     }
     if (position.x > this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2) {
       position.x = 0;
-      return;
     }
     if (position.y < 0 - (pacman->getBoundingBox().size.height / 2)) {
       position.y = this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2;
-      return;
     }
     if (position.y > this->getBoundingBox().getMaxY() + pacman->getBoundingBox().size.height/2) {
       position.y = 0;
-      return;
     }
     pacman->setPosition(position);
+
     if (flag == 1) {
         position.x -= 17;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
-        if (tileGid) {
-            pacman->stopAllActionsByTag(1);
-            flag = 0;
-        }
+        if(position.x > 0) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            if (tileGid) {
+                pacman->stopAllActionsByTag(1);
+                flag = 0;
+            }
+        } else { return; }
         position.x += 17;
-        tileCoord = tileCoordForPosition(position);
-        tileGid = _food->getTileGIDAt(tileCoord);
-        if(tileGid) {
-            _food->removeTileAt(tileCoord);
-            _numCollected++;
-            _hud->numCollectedChanged(_numCollected);
+        if(position.x < Director::getInstance()->getVisibleSize().width) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _food->getTileGIDAt(tileCoord);
+            if(tileGid) {
+                _food->removeTileAt(tileCoord);
+                _numCollected++;
+                _hud->numCollectedChanged(_numCollected);
+            }
         }
     }
     if (flag == 2) {
         position.x += 17;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
-        if (tileGid) {
-            pacman->stopAllActionsByTag(1);
-            flag = 0;
-        }
+        if(position.x < Director::getInstance()->getVisibleSize().width) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            if (tileGid) {
+                pacman->stopAllActionsByTag(1);
+                flag = 0;
+            }
+        } else { return; }
         position.x -= 17;
-        tileCoord = tileCoordForPosition(position);
-        tileGid = _food->getTileGIDAt(tileCoord);
-        if(tileGid) {
-            _food->removeTileAt(tileCoord);
-            _numCollected++;
-            _hud->numCollectedChanged(_numCollected);
+        if(position.x > 0) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _food->getTileGIDAt(tileCoord);
+            if(tileGid) {
+                _food->removeTileAt(tileCoord);
+                _numCollected++;
+                _hud->numCollectedChanged(_numCollected);
+            }
         }
     }
     if (flag == 3) {
         position.y += 17;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
-        if (tileGid) {
-            pacman->stopAllActionsByTag(1);
-            flag = 0;
-        }
+        if(position.y < 640) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            if (tileGid) {
+                pacman->stopAllActionsByTag(1);
+                flag = 0;
+            }
+        } else { return; }
         position.y -= 17;
-        tileCoord = tileCoordForPosition(position);
-        tileGid = _food->getTileGIDAt(tileCoord);
-        if(tileGid) {
-            _food->removeTileAt(tileCoord);
-            _numCollected++;
-            _hud->numCollectedChanged(_numCollected);
+        if(position.y > 0) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _food->getTileGIDAt(tileCoord);
+            if(tileGid) {
+                _food->removeTileAt(tileCoord);
+                _numCollected++;
+                _hud->numCollectedChanged(_numCollected);
+            }
         }
     }
     if (flag == 4) {
         position.y -= 17;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
-        if (tileGid) {
-            pacman->stopAllActionsByTag(1);
-            flag = 0;
-        }
+        if(position.y > 0) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _walls->getTileGIDAt(tileCoord);
+            if (tileGid) {
+                pacman->stopAllActionsByTag(1);
+                flag = 0;
+            }
+        } else { return; }
         position.y += 17;
-        tileCoord = tileCoordForPosition(position);
-        tileGid = _food->getTileGIDAt(tileCoord);
-        if(tileGid) {
-            _food->removeTileAt(tileCoord);
-            _numCollected++;
-            _hud->numCollectedChanged(_numCollected);
+        if(position.y < 640) {
+            Point tileCoord = tileCoordForPosition(position);
+            int tileGid = _food->getTileGIDAt(tileCoord);
+            if(tileGid) {
+                _food->removeTileAt(tileCoord);
+                _numCollected++;
+                _hud->numCollectedChanged(_numCollected);
+            }
         }
     }
     if(_numCollected == this->count) {
@@ -385,11 +396,17 @@ void Level::onKeyHold(float interval){
         Point position = pacman->getPosition();
         position.y += 32;
         position.x -= 15;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
+        Point tileCoord;
+        int tileGid1, tileGid;
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid = 0;}
         position.x += 30;
-        tileCoord = tileCoordForPosition(position);
-        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid1 = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid1 = 0;}
         if(!tileGid && !tileGid1){
             heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), UP_ARROW), heldKeys.end());
             auto moveUp = MoveBy::create(0.3, Vec2(0, 32));
@@ -407,11 +424,17 @@ void Level::onKeyHold(float interval){
         Point position = pacman->getPosition();
         position.y -= 32;
         position.x -= 15;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
+        Point tileCoord;
+        int tileGid1, tileGid;
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid = 0;}
         position.x += 30;
-        tileCoord = tileCoordForPosition(position);
-        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid1 = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid1 = 0;}
         if(!tileGid && !tileGid1){
             heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), DOWN_ARROW), heldKeys.end());
             auto moveDown = MoveBy::create(0.3, Vec2(0, -32));
@@ -429,11 +452,17 @@ void Level::onKeyHold(float interval){
         Point position = pacman->getPosition();
         position.x += 32;
         position.y -= 15;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
+        Point tileCoord;
+        int tileGid, tileGid1;
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid = 0;}
         position.y += 30;
-        tileCoord = tileCoordForPosition(position);
-        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid1 = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid1 = 0;}
         if(!tileGid && !tileGid1){
             heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW), heldKeys.end());
             auto moveRight = MoveBy::create(0.3, Vec2(32,0));
@@ -451,11 +480,17 @@ void Level::onKeyHold(float interval){
         Point position = pacman->getPosition();
         position.x -= 32;
         position.y -= 15;
-        Point tileCoord = tileCoordForPosition(position);
-        int tileGid = _walls->getTileGIDAt(tileCoord);
+        Point tileCoord;
+        int tileGid, tileGid1;
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid = 0;}
         position.y += 30;
-        tileCoord = tileCoordForPosition(position);
-        int tileGid1 = _walls->getTileGIDAt(tileCoord);
+        if(position.x >= 0 && position.y >= 0 && position.y < Director::getInstance()->getVisibleSize().height && position.x < Director::getInstance()->getVisibleSize().width) {
+            tileCoord = tileCoordForPosition(position);
+            tileGid1 = _walls->getTileGIDAt(tileCoord);
+        } else {tileGid1 = 0;}
         if(!tileGid && !tileGid1){
             heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), LEFT_ARROW), heldKeys.end());
             auto moveLeft = MoveBy::create(0.3, Vec2(-32, 0));
