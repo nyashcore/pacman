@@ -2,10 +2,10 @@
 #define __LEVEL_SCENE_H__
 
 #include "cocos2d.h"
-#include "GameOverScene.cpp"
+#include "GameOverScene.h"
 #include <iostream>
-#include "Ghost.cpp"
-#include "Pacman.cpp"
+#include "Ghost.h"
+#include "Director.cpp"
 #include <vector>
 #include <iterator>
 #include <cstdlib>
@@ -14,13 +14,13 @@
 #include <sstream>
 using std::vector;
 using std::string;
-const EventKeyboard::KeyCode ENTER = EventKeyboard::KeyCode::KEY_KP_ENTER;
-const EventKeyboard::KeyCode UP_ARROW = EventKeyboard::KeyCode::KEY_UP_ARROW;
-const EventKeyboard::KeyCode DOWN_ARROW = EventKeyboard::KeyCode::KEY_DOWN_ARROW;
-const EventKeyboard::KeyCode LEFT_ARROW = EventKeyboard::KeyCode::KEY_LEFT_ARROW;
-const EventKeyboard::KeyCode RIGHT_ARROW = EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
+const cocos2d::EventKeyboard::KeyCode ENTER = cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER;
+const cocos2d::EventKeyboard::KeyCode UP_ARROW = cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW;
+const cocos2d::EventKeyboard::KeyCode DOWN_ARROW = cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW;
+const cocos2d::EventKeyboard::KeyCode LEFT_ARROW = cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW;
+const cocos2d::EventKeyboard::KeyCode RIGHT_ARROW = cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
 #include "../external/tinyxml2/tinyxml2.h"
-#include "HudLayer.cpp"
+#include "HudLayer.h"
 #define NUM_OF_LEVELS 3
 
 class Level : public cocos2d::Layer
@@ -56,6 +56,9 @@ private:
     cocos2d::TMXTiledMap *_tileMap;
     cocos2d::TMXLayer *_walls;
     cocos2d::TMXLayer *_food;
+    DirectorMap dir;
+    MapBuilder builder;
+    MapPacman map;
     int flag;
 };
 

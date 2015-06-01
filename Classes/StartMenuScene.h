@@ -2,7 +2,7 @@
 #define __STARTMENU_SCENE_H__
 
 #include "cocos2d.h"
-#include "LevelScene.cpp"
+#include "LevelScene.h"
 #include <iostream>
 
 class StartMenu : public cocos2d::Layer

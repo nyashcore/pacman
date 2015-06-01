@@ -1,5 +1,4 @@
 #include "GameOverScene.h"
-
 USING_NS_CC;
 
 Scene* GameOver::createScene()
@@ -36,13 +35,6 @@ bool GameOver::init()
     closeItem->setPosition(Vec2(origin.x + visibleSize.width/2,
                                     origin.y + visibleSize.height/3 - 30));
 	MenuItems.pushBack(closeItem);
-//    auto restartLabel = Label::createWithTTF(labelConfig, "Start New Game");
-//    auto restartItem = MenuItemLabel::create(
-//                                            restartLabel,
-//                                            CC_CALLBACK_1(GameOver::menuRestartCallback, this));
-//    restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
-//                                    origin.y + visibleSize.height/3));
-//	MenuItems.pushBack(restartItem);
     auto menu = Menu::createWithArray(MenuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -50,8 +42,6 @@ bool GameOver::init()
     auto label = Label::createWithTTF(labelConfig, "Game Over!");
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
-//    label->enableShadow(Color4B::WHITE);
-//    label->enableGlow(Color4B::YELLOW);
     label->enableOutline(Color4B::GRAY, 1);
     this->addChild(label, 1);
 
@@ -76,9 +66,3 @@ void GameOver::menuCloseCallback(Ref* pSender)
     exit(0);
 #endif
 }
-
-//void GameOver::menuRestartCallback(Ref* pSender)
-//{
-//    auto scene = StartMenu::createScene();
-//    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
-//}

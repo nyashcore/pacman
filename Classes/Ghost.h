@@ -1,5 +1,6 @@
-class Ghost : public Sprite
+#include "cocos2d.h"
+class Ghost : public cocos2d::Sprite
 {
     public:
-        Sprite *create();
+        cocos2d::Sprite *create();
 };

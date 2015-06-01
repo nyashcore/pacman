@@ -116,12 +116,26 @@ include_directories(
 set(GAME_SRC
   Classes/AppDelegate.cpp
   Classes/HelloWorldScene.cpp
+  Classes/GameOverScene.cpp
+  Classes/Ghost.cpp
+  Classes/HudLayer.cpp
+  Classes/LevelScene.cpp
+  Classes/StartMenuScene.cpp
+  Classes/Pacman.cpp
+  Classes/Director.cpp
   ${PLATFORM_SPECIFIC_SRC}
 )
 
 set(GAME_HEADERS
   Classes/AppDelegate.h
   Classes/HelloWorldScene.h
+  Classes/GameOverScene.h
+  Classes/Ghost.h
+  Classes/HudLayer.h
+  Classes/LevelScene.h
+  Classes/StartMenuScene.h
+  Classes/Pacman.h
+  Classes/Director.h
   ${PLATFORM_SPECIFIC_HEADERS}
 )
 

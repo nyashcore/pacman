@@ -1,5 +1,5 @@
 #include "AppDelegate.h"
-#include "StartMenuScene.cpp"
+#include "StartMenuScene.h"
 //#include "LevelScene.h"
 
 USING_NS_CC;

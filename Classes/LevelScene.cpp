@@ -20,9 +20,7 @@ Scene* Level::createScene(int level)
     auto scene = Scene::createWithPhysics();
     scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     auto layer = Level::create(level);
-//    layer->setPhyWorld(scene->getPhysicsWorld());
     scene->addChild(layer);
-
     HudLayer *hud = new HudLayer();
     hud->init();
     scene->addChild(hud);
@@ -50,15 +48,13 @@ bool Level::init()
     labelConfig.customGlyphs = nullptr;
     labelConfig.distanceFieldEnabled = false;
 
-    string str_map = "map/level";
-    std::stringstream oss_convert;
-    oss_convert << this->lvl;
-    str_map += oss_convert.str();
-    str_map += ".tmx";
-    _tileMap = TMXTiledMap::create(str_map);
-    _walls = _tileMap->layerNamed("Walls");
+    builder.setLvl(this->lvl);
+    map = dir.createMap(builder);
+    pacman = map.pacman->pacman;
+    _tileMap = map._tileMap;
+    _walls = map._walls;
+    _food = map._food;
     count = _tileMap->getProperty("count").asByte();
-    _food = _tileMap->layerNamed("Food");
     addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
@@ -82,18 +78,8 @@ bool Level::init()
     auto label = Label::createWithTTF(labelConfig, "Hello");
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
-//    label->enableShadow(Color4B::WHITE);
-//    label->enableGlow(Color4B::YELLOW);
     label->enableOutline(Color4B::GRAY, 1);
     this->addChild(label, 1);
-
-   // auto sprite = Sprite::create("HelloWorld.png");
-
-    // position the sprite on the center of the screen
-//    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-//    this->addChild(sprite, 0);
-
-
 
     auto nodecache = SpriteFrameCache::getInstance();
     nodecache->addSpriteFramesWithFile("nodes/nodes.plist");
@@ -102,87 +88,23 @@ bool Level::init()
     tinyxml2::XMLDocument doc;
     doc.LoadFile("../../../Resources/levels.xml");
     tinyxml2::XMLElement* pWallElement = doc.FirstChildElement("lvl")->FirstChildElement("map");
-//    pWallElement->QueryIntAttribute("count", &(this->count));
-
-//    for(size_t i = 0; pWallElement != nullptr; i++) {
-//        pWallElement->QueryFloatAttribute("x", &x);
-//        pWallElement->QueryFloatAttribute("y", &y);
-//        auto wall = Sprite::createWithSpriteFrame(wallFrame);
-//        auto physicsBody = PhysicsBody::createBox(Size(32.0f , 32.0f ), PhysicsMaterial(0.1f, 1.0f, 0.0f));
-//        physicsBody->setGravityEnable(false);
-//        physicsBody->setDynamic(false);
-//        physicsBody->setCategoryBitmask(3);
-//        physicsBody->setCollisionBitmask(1);
-//        physicsBody->setContactTestBitmask(1);
-//        wall->setPhysicsBody(physicsBody);
-//        wall->setPosition(Vec2(x, y));
-//        wall->setTag(10);
-//        this->addChild(wall, 0);
-//        pWallElement = pWallElement->NextSiblingElement("wall");
-//    }
-//
-//    auto coinFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Food.png");
-//    tinyxml2::XMLElement* pCoinElement = doc.FirstChildElement("lvl")->FirstChildElement("map")->FirstChildElement("food")->FirstChildElement("coin");
-//    for(size_t i = 0; pCoinElement != nullptr; i++) {
-//        pCoinElement->QueryFloatAttribute("x", &x);
-//        pCoinElement->QueryFloatAttribute("y", &y);
-//        auto coin = Sprite::createWithSpriteFrame(coinFrame);
-//        coin->setPosition(Vec2(x, y));
-//        this->addChild(coin, 0);
-//        pCoinElement = pCoinElement->NextSiblingElement("coin");
-//    }
-//    tinyxml2::XMLElement* titleElement = doc.FirstChildElement( "PLAY" )->FirstChildElement( "TITLE" );
-//    tinyxml2::XMLText* textNode = titleElement->FirstChild()->ToText();
-//    printf( "Name of play (2): %s\n", textNode->Value() );
 
     auto spritecache = SpriteFrameCache::getInstance();
     spritecache->addSpriteFramesWithFile("sprites/sprites.plist");
 
-//    auto pacmanFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("Pacman.png");
-//    auto pacman = Sprite::createWithSpriteFrame(pacmanFrame);
-//    physicsBody->setDynamic(false);
-//    auto physicsBody = PhysicsBody::createCircle(pacman->getContentSize().width / 2 - 1);
-//    physicsBody->setGravityEnable(false);
-//    physicsBody->setCategoryBitmask(3);
-//    physicsBody->setCollisionBitmask(1);
-//    physicsBody->setContactTestBitmask(1);
-//    pacman->setPhysicsBody(physicsBody);
-////    auto pacman = Sprite::createWithSpriteFrameName("Pacman.png");
-//    pacman->setPosition(Vec2(300,250));
-//    pacman->setRotation(0);
-//    pacman->setScale(1);
-//    pacman->setAnchorPoint(Vec2(0.5, 0.5));
-//    pacman->setTag(15);
-//    pacman->setColor(Color3B::BLUE);
-    pacman = Pacman::getPacman();
     this->addChild(pacman, 1);
 
-       Vector<SpriteFrame*> animFrames;
+    Vector<SpriteFrame*> animFrames;
     animFrames.reserve(2);
     animFrames.pushBack(SpriteFrame::create("sprites/Pacman.png", Rect(0,0,31,31)));
     animFrames.pushBack(SpriteFrame::create("sprites/PacmanRound.png", Rect(0,0,31,31)));
-    // create the animation out of the frames
     Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f);
     Animate* animate = Animate::create(animation);
 
-    // run it and repeat it forever
     pacman->runAction(RepeatForever::create(animate));
-//    physicsBody1->setDynamic(false);
+
     Ghost ghost1;
     auto pacman1 = ghost1.create();
-//    auto physicsBody1 = PhysicsBody::createCircle(pacman1->getContentSize().width / 2 - 5);
-//    physicsBody1->setDynamic(false);
-//    physicsBody1->setGravityEnable(false);
-//    physicsBody1->setCategoryBitmask(1);
-//    physicsBody1->setCollisionBitmask(3);
-//    physicsBody1->setContactTestBitmask(1);
-//    pacman1->setPhysicsBody(physicsBody1);
-//    pacman1->setPosition(Vec2(340,250));
-//    pacman1->setRotation(0);
-//    pacman1->setScale(1);
-//    pacman1->setAnchorPoint(Vec2(0.5, 0.5));
-//    pacman1->setTag(20);
-////    pacman->setColor(Color3B::BLUE);
     this->addChild(pacman1, 1);
 
     auto moveBy1 = MoveBy::create(1, Vec2(80,0));
@@ -191,7 +113,6 @@ bool Level::init()
     auto moveBy21 = MoveBy::create(1, Vec2(0,80));
     auto seq12 = Sequence::create(moveBy1, moveBy2, moveBy12, moveBy21, nullptr);
     pacman1->runAction(RepeatForever::create(seq12));
-
 
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(Level::onKeyPressed, this);
@@ -419,7 +340,6 @@ void Level::onKeyHold(float interval){
             this->scheduleUpdate();
         }
     }
-
     if(std::find(heldKeys.begin(), heldKeys.end(), DOWN_ARROW) != heldKeys.end()){
         Point position = pacman->getPosition();
         position.y -= 32;
@@ -447,7 +367,6 @@ void Level::onKeyHold(float interval){
             this->scheduleUpdate();
         }
     }
-
     if(std::find(heldKeys.begin(), heldKeys.end(), RIGHT_ARROW) != heldKeys.end()){
         Point position = pacman->getPosition();
         position.x += 32;
@@ -475,7 +394,6 @@ void Level::onKeyHold(float interval){
             this->scheduleUpdate();
         }
     }
-
     if(std::find(heldKeys.begin(), heldKeys.end(), LEFT_ARROW) != heldKeys.end()){
         Point position = pacman->getPosition();
         position.x -= 32;
