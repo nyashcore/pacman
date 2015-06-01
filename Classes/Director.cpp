@@ -29,8 +29,7 @@ public:
         sceneMap._walls = sceneMap._tileMap->layerNamed("Walls");
     }
     void addPacman() {
-        sceneMap.pacman = new Pacman();
-        sceneMap.pacman->createPacman();
+        sceneMap.pacman = Pacman::getInstance();
     }
     void setLvl(int level) {
         sceneMap.lvl = level;

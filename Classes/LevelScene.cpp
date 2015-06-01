@@ -50,7 +50,7 @@ bool Level::init()
 
     builder.setLvl(this->lvl);
     map = dir.createMap(builder);
-    pacman = map.pacman->pacman;
+    pacman = map.pacman->getPacman();
     _tileMap = map._tileMap;
     _walls = map._walls;
     _food = map._food;
@@ -295,6 +295,7 @@ void Level::update(float delta){
     if(_numCollected == this->count) {
         _numCollected = -1;
         if(lvl < NUM_OF_LEVELS) {
+            Pacman::setInstance();
             auto scene = Level::createScene(lvl+1);
             Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
         } else {
