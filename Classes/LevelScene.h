@@ -2,8 +2,11 @@
 #define __LEVEL_SCENE_H__
 
 #include "cocos2d.h"
+#include "WinScene.h"
 #include "GameOverScene.h"
 #include <iostream>
+#include <time.h>
+#include <unistd.h>
 #include "Ghost.h"
 #include "Director.cpp"
 #include <vector>
@@ -12,6 +15,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
+#include <stdlib.h>
 using std::vector;
 using std::string;
 const cocos2d::EventKeyboard::KeyCode ENTER = cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER;
@@ -35,7 +39,6 @@ public:
 
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    void menuRestartCallback(cocos2d::Ref* pSender);
     bool onContactBegin(cocos2d::PhysicsContact& contact);
     void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onKeyHold(float);
@@ -49,6 +52,8 @@ public:
     int getLvl(void) { return lvl; }
 private:
     int lvl;
+    int numOfDumb;
+    int numOfClev;
     int count;
     HudLayer *_hud;
     int _numCollected;

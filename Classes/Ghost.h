@@ -2,5 +2,5 @@
 class Ghost : public cocos2d::Sprite
 {
     public:
-        cocos2d::Sprite *create();
+        cocos2d::Sprite *create(int);
 };

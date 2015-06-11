@@ -187,5 +187,5 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 void HelloWorld::menuRestartCallback(Ref* pSender)
 {
     auto scene = HelloWorld::createScene();
-    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+    Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
 }

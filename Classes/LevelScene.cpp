@@ -1,4 +1,5 @@
 #include "LevelScene.h"
+#include "StartMenuScene.h"
 
 USING_NS_CC;
 
@@ -18,7 +19,7 @@ Level* Level::create(int level) {
 Scene* Level::createScene(int level)
 {
     auto scene = Scene::createWithPhysics();
-    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+//    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NO);
     auto layer = Level::create(level);
     scene->addChild(layer);
     HudLayer *hud = new HudLayer();
@@ -55,6 +56,8 @@ bool Level::init()
     _walls = map._walls;
     _food = map._food;
     count = _tileMap->getProperty("count").asByte();
+    numOfDumb = _tileMap->getProperty("numOfDumb").asByte();
+    numOfClev = _tileMap->getProperty("numOfClev").asByte();
     addChild(_tileMap, 0, 99);
     Vector<MenuItem*> MenuItems;
     auto closeItem = MenuItemImage::create(
@@ -63,19 +66,14 @@ bool Level::init()
                                            CC_CALLBACK_1(Level::menuCloseCallback, this));
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2,
                                                 origin.y + closeItem->getContentSize().height/2));
-    auto restartLabel1 = Label::createWithTTF(labelConfig, "Restart");
-    auto restartItem = MenuItemLabel::create(
-                                            restartLabel1,
-                                            CC_CALLBACK_1(Level::menuRestartCallback, this));
-    restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
-                                    origin.y + visibleSize.height/3));
 	MenuItems.pushBack(closeItem);
-	MenuItems.pushBack(restartItem);
     auto menu = Menu::createWithArray(MenuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    auto label = Label::createWithTTF(labelConfig, "Hello");
+    char topLabel[10];
+    sprintf(topLabel, "level %d", this->lvl);
+    auto label = Label::createWithTTF(labelConfig, topLabel);
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
     label->enableOutline(Color4B::GRAY, 1);
@@ -102,17 +100,20 @@ bool Level::init()
     Animate* animate = Animate::create(animation);
 
     pacman->runAction(RepeatForever::create(animate));
+    for(int i = 1; i < numOfDumb+numOfClev+1; i++) {
+        Ghost ghost1;
+        auto ohMyGodWhatAGhost = ghost1.create(i);
+        this->addChild(ohMyGodWhatAGhost, 1);
 
-    Ghost ghost1;
-    auto pacman1 = ghost1.create();
-    this->addChild(pacman1, 1);
-
-    auto moveBy1 = MoveBy::create(1, Vec2(80,0));
-    auto moveBy2 = MoveBy::create(1, Vec2(0,-80));
-    auto moveBy12 = MoveBy::create(1, Vec2(-80,0));
-    auto moveBy21 = MoveBy::create(1, Vec2(0,80));
-    auto seq12 = Sequence::create(moveBy1, moveBy2, moveBy12, moveBy21, nullptr);
-    pacman1->runAction(RepeatForever::create(seq12));
+        auto moveBy1 = MoveBy::create(2/(0.1+i), Vec2((i+1)*60,0));
+        auto moveBy2 = MoveBy::create(2/(0.1+i), Vec2(0,-60*(i+1)));
+        auto moveBy12 = MoveBy::create(2/(0.1+i), Vec2(-60*(i+1),0));
+        auto moveBy21 = MoveBy::create(2/(0.1+i), Vec2(0,60*(i+1)));
+        auto seq12 = Sequence::create(moveBy1, moveBy2, moveBy12, moveBy21, nullptr);
+        Action* act = RepeatForever::create(seq12);
+        act->setTag(2);
+        ohMyGodWhatAGhost->runAction(act);
+    }
 
     auto listener = EventListenerKeyboard::create();
     listener->onKeyPressed = CC_CALLBACK_2(Level::onKeyPressed, this);
@@ -123,30 +124,30 @@ bool Level::init()
     contactListener->onContactBegin = CC_CALLBACK_1(Level::onContactBegin, this);
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
-    auto delay = DelayTime::create(0.25);
-    auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
-    auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
-    pinkyGhost->setPosition(Vec2(150,200));
-    pinkyGhost->setRotation(0);
-    pinkyGhost->setScale(1);
-    pinkyGhost->setAnchorPoint(Vec2(0.5, 0.5));
-    this->addChild(pinkyGhost, 0);
-    auto moveBy3 = MoveBy::create(2, Vec2(30,0));
-    auto moveBy4 = MoveBy::create(2, Vec2(0,-80));
-    pinkyGhost->runAction(Sequence::create(moveBy3, delay, moveBy4, nullptr));
-
-    auto blueGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("BlueGhost.png");
-    auto blueGhost = Sprite::createWithSpriteFrame(blueGhostFrame);
-    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height/2));
-    blueGhost->setScale(1);
-    blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
-    this->addChild(blueGhost, 0);
-    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - blueGhost->getContentSize().height)));
-    auto move2 = move1->reverse();
-    auto move_ease_in = EaseBounceOut::create(move1->clone());
-    auto move_ease_in_back = EaseBounceOut::create(move2->clone());
-    auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
-    blueGhost->runAction(RepeatForever::create(seq1));
+    auto delay = DelayTime::create(1.0);
+//    auto pinkyGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("PinkyGhost.png");
+//    auto pinkyGhost = Sprite::createWithSpriteFrame(pinkyGhostFrame);
+//    pinkyGhost->setPosition(Vec2(150,200));
+//    pinkyGhost->setRotation(0);
+//    pinkyGhost->setScale(1);
+//    pinkyGhost->setAnchorPoint(Vec2(0.5, 0.5));
+//    this->addChild(pinkyGhost, 0);
+//    auto moveBy3 = MoveBy::create(2, Vec2(30,0));
+//    auto moveBy4 = MoveBy::create(2, Vec2(0,-80));
+//    pinkyGhost->runAction(Sequence::create(moveBy3, delay, moveBy4, nullptr));
+//
+//    auto blueGhostFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("BlueGhost.png");
+//    auto blueGhost = Sprite::createWithSpriteFrame(blueGhostFrame);
+//    blueGhost->setPosition(Vec2(700,visibleSize.height - blueGhost->getContentSize().height/2));
+//    blueGhost->setScale(1);
+//    blueGhost->setAnchorPoint(Vec2(0.5, 0.5));
+//    this->addChild(blueGhost, 0);
+//    auto move1 = MoveBy::create(2, Vec2(0,-(visibleSize.height - blueGhost->getContentSize().height)));
+//    auto move2 = move1->reverse();
+//    auto move_ease_in = EaseBounceOut::create(move1->clone());
+//    auto move_ease_in_back = EaseBounceOut::create(move2->clone());
+//    auto seq1 = Sequence::create(move_ease_in, delay->clone(), move_ease_in_back, delay->clone(), nullptr);
+//    blueGhost->runAction(RepeatForever::create(seq1));
 
     this->schedule(schedule_selector(Level::onKeyHold));
 
@@ -163,15 +164,9 @@ void Level::menuCloseCallback(Ref* pSender)
 
     Director::getInstance()->end();
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TfARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif
-}
-
-void Level::menuRestartCallback(Ref* pSender)
-{
-    auto scene = Level::createScene(lvl);
-    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
 }
 
 bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
@@ -180,8 +175,16 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
     auto nodeB = contact.getShapeB()->getBody()->getNode();
     if( nodeA && nodeB ) {
         if( nodeA->getTag() == 20 || nodeB->getTag() == 20 ) {
+//            pacman->stopAllActionsByTag(1);
+            nodeB->stopAllActionsByTag(2);
+            nodeA->stopAllActionsByTag(2);
+            nodeA->stopAllActionsByTag(1);
+            nodeB->stopAllActionsByTag(1);
+            Pacman::setInstance();
+            pacman->stopAllActionsByTag(1);
+            _numCollected = -1;
             auto scene = GameOver::createScene();
-            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+            Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
         } else if( nodeA->getTag() == 10 || nodeB->getTag() == 10 ) {
             if( nodeA->getTag() == 15 ) {
                 nodeA->stopAllActionsByTag(1);
@@ -193,6 +196,20 @@ bool Level::onContactBegin(cocos2d::PhysicsContact& contact)
 }
 
 void Level::update(float delta){
+    if(_numCollected == this->count) {
+        _numCollected = -1;
+        if(lvl < NUM_OF_LEVELS) {
+            Pacman::setInstance();
+            pacman->stopAllActionsByTag(1);
+            auto scene = Level::createScene(lvl+1);
+            Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
+        } else {
+            Pacman::setInstance();
+            pacman->stopAllActionsByTag(1);
+            auto scene = GameOver::createScene();
+            Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
+        }
+    }
     auto position = pacman->getPosition();
     if (position.x  < 0 - (pacman->getBoundingBox().size.width / 2)) {
       position.x = this->getBoundingBox().getMaxX() + pacman->getBoundingBox().size.width/2;
@@ -208,7 +225,7 @@ void Level::update(float delta){
     }
     pacman->setPosition(position);
 
-    if (flag == 1) {
+    if (flag == 1) {    // флаг
         position.x -= 17;
         if(position.x > 0) {
             Point tileCoord = tileCoordForPosition(position);
@@ -250,7 +267,7 @@ void Level::update(float delta){
             }
         }
     }
-    if (flag == 3) {
+    if (flag == 3) {    // просто потому что мы можем
         position.y += 17;
         if(position.y < 640) {
             Point tileCoord = tileCoordForPosition(position);
@@ -290,17 +307,6 @@ void Level::update(float delta){
                 _numCollected++;
                 _hud->numCollectedChanged(_numCollected);
             }
-        }
-    }
-    if(_numCollected == this->count) {
-        _numCollected = -1;
-        if(lvl < NUM_OF_LEVELS) {
-            Pacman::setInstance();
-            auto scene = Level::createScene(lvl+1);
-            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
-        } else {
-            auto scene = GameOver::createScene();
-            Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
         }
     }
 }

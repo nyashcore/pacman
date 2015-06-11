@@ -55,7 +55,7 @@ bool StartMenu::init()
     label->enableOutline(Color4B::GRAY, 1);
     this->addChild(label, 1);
 
-    auto sprite = Sprite::create("HelloWorld.png");
+    auto sprite = Sprite::create("HelloWorld1.png");
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
     this->addChild(sprite, 0);
 
@@ -80,5 +80,5 @@ void StartMenu::menuCloseCallback(Ref* pSender)
 void StartMenu::menuRestartCallback(Ref* pSender)
 {
     auto scene = Level::createScene(1);
-    Director::getInstance()->replaceScene(TransitionSlideInT::create(1, scene));
+    Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
 }

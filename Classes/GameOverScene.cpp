@@ -1,4 +1,5 @@
 #include "GameOverScene.h"
+#include "LevelScene.h"
 USING_NS_CC;
 
 Scene* GameOver::createScene()
@@ -35,6 +36,14 @@ bool GameOver::init()
     closeItem->setPosition(Vec2(origin.x + visibleSize.width/2,
                                     origin.y + visibleSize.height/3 - 30));
 	MenuItems.pushBack(closeItem);
+    auto restartLabel1 = Label::createWithTTF(labelConfig, "Restart");
+    auto restartItem = MenuItemLabel::create(
+                                            restartLabel1,
+                                            CC_CALLBACK_1(GameOver::menuRestartCallback, this));
+    restartItem->setPosition(Vec2(origin.x + visibleSize.width/2,
+                                    origin.y + visibleSize.height/3));
+	MenuItems.pushBack(restartItem);
+
     auto menu = Menu::createWithArray(MenuItems);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
@@ -65,4 +74,9 @@ void GameOver::menuCloseCallback(Ref* pSender)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif
+}
+void GameOver::menuRestartCallback(Ref* pSender)
+{
+    auto scene = Level::createScene(1);
+    Director::getInstance()->replaceScene(TransitionFade::create(1, scene));
 }
